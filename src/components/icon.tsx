@@ -1,7 +1,7 @@
 import React from "react";
 
 type Icon = {
-  icon: React.ReactElement;
+  icon: React.ReactElement<React.SVGProps<SVGSVGElement>>;
   className?: string;
   id?: string;
 } & React.SVGProps<SVGSVGElement>;

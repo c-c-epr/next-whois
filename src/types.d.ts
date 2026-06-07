@@ -3,3 +3,5 @@ declare module "@khmyznikov/pwa-install" {
     constructor();
   }
 }
+
+declare module "*.css";
