@@ -3,6 +3,10 @@ name: Docker Image CI
 on:
   push:
 
+permissions:
+  contents: read
+  packages: write
+
 env:
   REGISTRY: ghcr.io
   DOCKERHUB_USERNAME: ${{github.actor}}
