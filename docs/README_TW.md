@@ -74,6 +74,9 @@ pnpm dev
 | `REDIS_PASSWORD` | Redis 密碼 | — |
 | `REDIS_DB` | Redis 資料庫索引 | 0 |
 | `REDIS_CACHE_TTL` | 快取 TTL（秒） | 3600 |
+| `REDIS_CONNECT_TIMEOUT_MS` | Redis 連線逾時（毫秒） | 1000 |
+| `REDIS_RETRY_DELAY_MS` | Redis 重連重試延遲（毫秒） | 100 |
+| `REDIS_RETRY_BACKOFF_MS` | Redis 錯誤後暫停快取操作的時間（毫秒） | 30000 |
 
 ## API
 
