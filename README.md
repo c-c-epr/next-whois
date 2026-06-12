@@ -74,6 +74,9 @@ pnpm dev
 | `REDIS_PASSWORD` | Redis password | — |
 | `REDIS_DB` | Redis database index | 0 |
 | `REDIS_CACHE_TTL` | Cache TTL in seconds | 3600 |
+| `REDIS_CONNECT_TIMEOUT_MS` | Redis connection timeout in milliseconds | 1000 |
+| `REDIS_RETRY_DELAY_MS` | Redis reconnect retry delay in milliseconds | 100 |
+| `REDIS_RETRY_BACKOFF_MS` | Cache operation backoff after Redis errors in milliseconds | 30000 |
 
 ## API
 
