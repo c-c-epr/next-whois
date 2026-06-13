@@ -17,15 +17,6 @@ export type DomainRegex = {
   unknownTLD?: boolean;
 };
 
-const specialDomains: Record<string, string> = {
-  "ac.cn": "www.ac.cn",
-  "gov.cn": "www.gov.cn",
-  "com.cn": "www.com.cn",
-  "org.cn": "www.org.cn",
-  "net.cn": "www.net.cn",
-  "edu.cn": "www.edu.cn",
-  "mil.cn": "www.mil.cn",
-};
 
 const defaultRegex: DomainRegex = {
   domainName: "Domain Name: *([^\\s]+)",
@@ -406,6 +397,4 @@ export function getDomainRegex(domain: string): DomainRegex {
   }
 }
 
-export function getSpecialDomain(domain: string): string {
-  return specialDomains[domain.toLowerCase()] ?? domain;
-}
+
