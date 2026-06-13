@@ -3,7 +3,6 @@ import { twMerge } from "tailwind-merge";
 import React from "react";
 import { toast } from "sonner";
 import { parse } from "tldts";
-import { getSpecialDomain } from "@/lib/whois/lib";
 import { useTranslation } from "@/lib/i18n";
 
 export function cn(...inputs: ClassValue[]) {
@@ -125,7 +124,7 @@ export function toErrorMessage(e: any): string {
 
 export function extractDomain(url: string): string | null {
   try {
-    const result = parse(getSpecialDomain(url), {
+    const result = parse(url, {
       allowPrivateDomains: false,
     });
 
