@@ -2,8 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 
 export interface ClickableProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    React.PropsWithChildren<{}> {
+  extends React.HTMLAttributes<HTMLDivElement>, React.PropsWithChildren<{}> {
   tapScale?: number;
   tapDuration?: number;
   hoverScale?: number;

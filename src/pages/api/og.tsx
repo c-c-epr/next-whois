@@ -181,684 +181,678 @@ export default async function handler(req: NextRequest) {
   const updatedRelative = updated ? getRelativeTime(updated) : "";
 
   return new ImageResponse(
-    (
-      <div
-        style={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: bg,
-          backgroundImage: `radial-gradient(${isDark ? "#27272a" : "#d4d4d8"} 1px, transparent 1px)`,
-          backgroundSize: "24px 24px",
-          padding: "40px",
-          position: "relative",
-        }}
-      >
-        {query && hasDetails ? (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: bg,
+        backgroundImage: `radial-gradient(${isDark ? "#27272a" : "#d4d4d8"} 1px, transparent 1px)`,
+        backgroundSize: "24px 24px",
+        padding: "40px",
+        position: "relative",
+      }}
+    >
+      {query && hasDetails ? (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            width: "100%",
+            maxWidth: "1000px",
+            backgroundColor: cardBg,
+            border: `1px solid ${border}`,
+            borderRadius: "16px",
+            padding: "36px 44px",
+            gap: "20px",
+            boxShadow: isDark
+              ? "0 4px 24px rgba(0,0,0,0.3)"
+              : "0 4px 24px rgba(0,0,0,0.06)",
+          }}
+        >
           <div
             style={{
               display: "flex",
-              flexDirection: "column",
-              width: "100%",
-              maxWidth: "1000px",
-              backgroundColor: cardBg,
-              border: `1px solid ${border}`,
-              borderRadius: "16px",
-              padding: "36px 44px",
-              gap: "20px",
-              boxShadow: isDark
-                ? "0 4px 24px rgba(0,0,0,0.3)"
-                : "0 4px 24px rgba(0,0,0,0.06)",
+              alignItems: "flex-start",
+              justifyContent: "space-between",
             }}
           >
             <div
               style={{
                 display: "flex",
-                alignItems: "flex-start",
-                justifyContent: "space-between",
+                flexDirection: "column",
+                gap: "6px",
+                flex: 1,
+                minWidth: 0,
               }}
             >
               <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "6px",
-                  flex: 1,
-                  minWidth: 0,
-                }}
+                style={{ display: "flex", alignItems: "center", gap: "8px" }}
               >
                 <div
-                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
+                  style={{
+                    padding: "3px 10px",
+                    borderRadius: "4px",
+                    backgroundColor: typeBadge.bg,
+                    fontSize: "11px",
+                    fontWeight: 700,
+                    color: typeBadge.fg,
+                    letterSpacing: "0.08em",
+                  }}
                 >
+                  {queryType}
+                </div>
+                {age && (
                   <div
                     style={{
                       padding: "3px 10px",
                       borderRadius: "4px",
-                      backgroundColor: typeBadge.bg,
+                      backgroundColor: subtleBg,
                       fontSize: "11px",
-                      fontWeight: 700,
-                      color: typeBadge.fg,
-                      letterSpacing: "0.08em",
-                    }}
-                  >
-                    {queryType}
-                  </div>
-                  {age && (
-                    <div
-                      style={{
-                        padding: "3px 10px",
-                        borderRadius: "4px",
-                        backgroundColor: subtleBg,
-                        fontSize: "11px",
-                        fontWeight: 500,
-                        color: muted,
-                      }}
-                    >
-                      {`${age} ${parseInt(age) === 1 ? "year" : "years"}`}
-                    </div>
-                  )}
-                </div>
-                <span
-                  style={{
-                    fontSize: Math.min(
-                      52,
-                      Math.max(
-                        28,
-                        Math.floor((750 / Math.max(query.length, 1)) * 1.5),
-                      ),
-                    ),
-                    fontWeight: 700,
-                    color: fg,
-                    letterSpacing: "-0.02em",
-                    lineHeight: 1.15,
-                  }}
-                >
-                  {query}
-                </span>
-                {registrar && (
-                  <span
-                    style={{
-                      fontSize: "14px",
+                      fontWeight: 500,
                       color: muted,
-                      fontWeight: 400,
-                      marginTop: "2px",
                     }}
                   >
-                    {registrar}
-                    {registrantOrg && registrantOrg !== registrar
-                      ? ` · ${registrantOrg}`
-                      : ""}
-                  </span>
+                    {`${age} ${parseInt(age) === 1 ? "year" : "years"}`}
+                  </div>
                 )}
               </div>
+              <span
+                style={{
+                  fontSize: Math.min(
+                    52,
+                    Math.max(
+                      28,
+                      Math.floor((750 / Math.max(query.length, 1)) * 1.5),
+                    ),
+                  ),
+                  fontWeight: 700,
+                  color: fg,
+                  letterSpacing: "-0.02em",
+                  lineHeight: 1.15,
+                }}
+              >
+                {query}
+              </span>
+              {registrar && (
+                <span
+                  style={{
+                    fontSize: "14px",
+                    color: muted,
+                    fontWeight: 400,
+                    marginTop: "2px",
+                  }}
+                >
+                  {registrar}
+                  {registrantOrg && registrantOrg !== registrar
+                    ? ` · ${registrantOrg}`
+                    : ""}
+                </span>
+              )}
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-end",
+                gap: "6px",
+                marginLeft: "16px",
+                flexShrink: 0,
+              }}
+            >
               <div
                 style={{
                   display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-end",
+                  alignItems: "center",
                   gap: "6px",
-                  marginLeft: "16px",
-                  flexShrink: 0,
+                  padding: "5px 12px",
+                  borderRadius: "8px",
+                  backgroundColor: `${statusColor}18`,
+                  border: `1px solid ${statusColor}40`,
                 }}
               >
                 <div
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "6px",
-                    padding: "5px 12px",
-                    borderRadius: "8px",
-                    backgroundColor: `${statusColor}18`,
-                    border: `1px solid ${statusColor}40`,
+                    width: "8px",
+                    height: "8px",
+                    borderRadius: "50%",
+                    backgroundColor: statusColor,
                   }}
-                >
-                  <div
-                    style={{
-                      width: "8px",
-                      height: "8px",
-                      borderRadius: "50%",
-                      backgroundColor: statusColor,
-                    }}
-                  />
-                  <span
-                    style={{
-                      fontSize: "12px",
-                      fontWeight: 700,
-                      color: statusColor,
-                      letterSpacing: "0.04em",
-                    }}
-                  >
-                    {statusLabel}
-                  </span>
-                </div>
-                {remainingDays !== null && remainingDays > 0 && (
-                  <span
-                    style={{ fontSize: "11px", color: muted, fontWeight: 500 }}
-                  >
-                    {`${remainingDays}d remaining`}
-                  </span>
-                )}
-              </div>
-            </div>
-
-            <div
-              style={{
-                display: "flex",
-                borderTop: `1px solid ${border}`,
-                paddingTop: "16px",
-                gap: "32px",
-                flexWrap: "wrap",
-              }}
-            >
-              {created && (
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "3px",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "10px",
-                      color: muted,
-                      fontWeight: 600,
-                      letterSpacing: "0.08em",
-                    }}
-                  >
-                    CREATED
-                  </span>
-                  <span
-                    style={{
-                      fontSize: "15px",
-                      color: fg,
-                      fontWeight: 600,
-                      fontFamily: "monospace",
-                    }}
-                  >
-                    {created}
-                  </span>
-                  {createdRelative && (
-                    <span
-                      style={{
-                        fontSize: "10px",
-                        color: muted,
-                        fontWeight: 400,
-                      }}
-                    >
-                      {createdRelative}
-                    </span>
-                  )}
-                </div>
-              )}
-              {expires && (
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "3px",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "10px",
-                      color: muted,
-                      fontWeight: 600,
-                      letterSpacing: "0.08em",
-                    }}
-                  >
-                    EXPIRES
-                  </span>
-                  <span
-                    style={{
-                      fontSize: "15px",
-                      color: fg,
-                      fontWeight: 600,
-                      fontFamily: "monospace",
-                    }}
-                  >
-                    {expires}
-                  </span>
-                  {expiresRelative && (
-                    <span
-                      style={{
-                        fontSize: "10px",
-                        color:
-                          remainingDays !== null && remainingDays > 60
-                            ? greenColor
-                            : muted,
-                        fontWeight: 500,
-                      }}
-                    >
-                      {expiresRelative}
-                    </span>
-                  )}
-                </div>
-              )}
-              {updated && (
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "3px",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "10px",
-                      color: muted,
-                      fontWeight: 600,
-                      letterSpacing: "0.08em",
-                    }}
-                  >
-                    UPDATED
-                  </span>
-                  <span
-                    style={{
-                      fontSize: "15px",
-                      color: fg,
-                      fontWeight: 600,
-                      fontFamily: "monospace",
-                    }}
-                  >
-                    {updated}
-                  </span>
-                  {updatedRelative && (
-                    <span
-                      style={{
-                        fontSize: "10px",
-                        color: muted,
-                        fontWeight: 400,
-                      }}
-                    >
-                      {updatedRelative}
-                    </span>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {(registrantOrg || country) && (
-              <div style={{ display: "flex", gap: "32px", flexWrap: "wrap" }}>
-                {registrantOrg && (
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "2px",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "10px",
-                        color: muted,
-                        fontWeight: 600,
-                        letterSpacing: "0.08em",
-                      }}
-                    >
-                      ORGANIZATION
-                    </span>
-                    <span
-                      style={{ fontSize: "13px", color: fg, fontWeight: 500 }}
-                    >
-                      {registrantOrg}
-                    </span>
-                  </div>
-                )}
-                {country && (
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "2px",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "10px",
-                        color: muted,
-                        fontWeight: 600,
-                        letterSpacing: "0.08em",
-                      }}
-                    >
-                      COUNTRY
-                    </span>
-                    <span
-                      style={{ fontSize: "13px", color: fg, fontWeight: 500 }}
-                    >
-                      {country}
-                    </span>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {(statusList.length > 0 ||
-              nsList.length > 0 ||
-              dnssec ||
-              whoisServer) && (
-              <div style={{ display: "flex", gap: "28px", flexWrap: "wrap" }}>
-                {statusList.length > 0 && (
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "5px",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "10px",
-                        color: muted,
-                        fontWeight: 600,
-                        letterSpacing: "0.08em",
-                      }}
-                    >
-                      STATUS
-                    </span>
-                    <div
-                      style={{ display: "flex", gap: "4px", flexWrap: "wrap" }}
-                    >
-                      {statusList.map((s) => (
-                        <div
-                          key={s}
-                          style={{
-                            padding: "2px 7px",
-                            borderRadius: "4px",
-                            backgroundColor: subtleBg,
-                            fontSize: "10px",
-                            color: muted,
-                            fontWeight: 500,
-                            fontFamily: "monospace",
-                          }}
-                        >
-                          {s.trim()}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {nsList.length > 0 && (
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "5px",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "10px",
-                        color: muted,
-                        fontWeight: 600,
-                        letterSpacing: "0.08em",
-                      }}
-                    >
-                      NAMESERVERS
-                    </span>
-                    <div
-                      style={{ display: "flex", gap: "4px", flexWrap: "wrap" }}
-                    >
-                      {nsList.map((n) => (
-                        <div
-                          key={n}
-                          style={{
-                            padding: "2px 7px",
-                            borderRadius: "4px",
-                            backgroundColor: subtleBg,
-                            fontSize: "10px",
-                            color: muted,
-                            fontWeight: 500,
-                            fontFamily: "monospace",
-                          }}
-                        >
-                          {n.trim()}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {dnssec && (
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "5px",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "10px",
-                        color: muted,
-                        fontWeight: 600,
-                        letterSpacing: "0.08em",
-                      }}
-                    >
-                      DNSSEC
-                    </span>
-                    <span
-                      style={{
-                        fontSize: "12px",
-                        color: muted,
-                        fontWeight: 500,
-                        fontFamily: "monospace",
-                      }}
-                    >
-                      {dnssec}
-                    </span>
-                  </div>
-                )}
-                {whoisServer && (
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "5px",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "10px",
-                        color: muted,
-                        fontWeight: 600,
-                        letterSpacing: "0.08em",
-                      }}
-                    >
-                      WHOIS SERVER
-                    </span>
-                    <span
-                      style={{
-                        fontSize: "12px",
-                        color: muted,
-                        fontWeight: 500,
-                        fontFamily: "monospace",
-                      }}
-                    >
-                      {whoisServer}
-                    </span>
-                  </div>
-                )}
-              </div>
-            )}
-
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                marginTop: "4px",
-              }}
-            >
-              <div
-                style={{ display: "flex", alignItems: "center", gap: "6px" }}
-              >
-                <div
-                  style={{
-                    width: "20px",
-                    height: "20px",
-                    backgroundColor: fg,
-                    color: bg,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderRadius: "4px",
-                    fontSize: "11px",
-                    fontWeight: 700,
-                  }}
-                >
-                  W
-                </div>
+                />
                 <span
-                  style={{ fontSize: "12px", color: muted, fontWeight: 500 }}
+                  style={{
+                    fontSize: "12px",
+                    fontWeight: 700,
+                    color: statusColor,
+                    letterSpacing: "0.04em",
+                  }}
                 >
-                  next-whois-ui
+                  {statusLabel}
                 </span>
               </div>
-              <span style={{ fontSize: "11px", color: accent }}>
-                github.com/zmh-program/next-whois-ui
-              </span>
+              {remainingDays !== null && remainingDays > 0 && (
+                <span
+                  style={{ fontSize: "11px", color: muted, fontWeight: 500 }}
+                >
+                  {`${remainingDays}d remaining`}
+                </span>
+              )}
             </div>
           </div>
-        ) : (
+
           <div
             style={{
               display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "24px",
+              borderTop: `1px solid ${border}`,
+              paddingTop: "16px",
+              gap: "32px",
+              flexWrap: "wrap",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            {created && (
               <div
                 style={{
-                  width: "44px",
-                  height: "44px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "3px",
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: "10px",
+                    color: muted,
+                    fontWeight: 600,
+                    letterSpacing: "0.08em",
+                  }}
+                >
+                  CREATED
+                </span>
+                <span
+                  style={{
+                    fontSize: "15px",
+                    color: fg,
+                    fontWeight: 600,
+                    fontFamily: "monospace",
+                  }}
+                >
+                  {created}
+                </span>
+                {createdRelative && (
+                  <span
+                    style={{
+                      fontSize: "10px",
+                      color: muted,
+                      fontWeight: 400,
+                    }}
+                  >
+                    {createdRelative}
+                  </span>
+                )}
+              </div>
+            )}
+            {expires && (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "3px",
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: "10px",
+                    color: muted,
+                    fontWeight: 600,
+                    letterSpacing: "0.08em",
+                  }}
+                >
+                  EXPIRES
+                </span>
+                <span
+                  style={{
+                    fontSize: "15px",
+                    color: fg,
+                    fontWeight: 600,
+                    fontFamily: "monospace",
+                  }}
+                >
+                  {expires}
+                </span>
+                {expiresRelative && (
+                  <span
+                    style={{
+                      fontSize: "10px",
+                      color:
+                        remainingDays !== null && remainingDays > 60
+                          ? greenColor
+                          : muted,
+                      fontWeight: 500,
+                    }}
+                  >
+                    {expiresRelative}
+                  </span>
+                )}
+              </div>
+            )}
+            {updated && (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "3px",
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: "10px",
+                    color: muted,
+                    fontWeight: 600,
+                    letterSpacing: "0.08em",
+                  }}
+                >
+                  UPDATED
+                </span>
+                <span
+                  style={{
+                    fontSize: "15px",
+                    color: fg,
+                    fontWeight: 600,
+                    fontFamily: "monospace",
+                  }}
+                >
+                  {updated}
+                </span>
+                {updatedRelative && (
+                  <span
+                    style={{
+                      fontSize: "10px",
+                      color: muted,
+                      fontWeight: 400,
+                    }}
+                  >
+                    {updatedRelative}
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+
+          {(registrantOrg || country) && (
+            <div style={{ display: "flex", gap: "32px", flexWrap: "wrap" }}>
+              {registrantOrg && (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "2px",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "10px",
+                      color: muted,
+                      fontWeight: 600,
+                      letterSpacing: "0.08em",
+                    }}
+                  >
+                    ORGANIZATION
+                  </span>
+                  <span
+                    style={{ fontSize: "13px", color: fg, fontWeight: 500 }}
+                  >
+                    {registrantOrg}
+                  </span>
+                </div>
+              )}
+              {country && (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "2px",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "10px",
+                      color: muted,
+                      fontWeight: 600,
+                      letterSpacing: "0.08em",
+                    }}
+                  >
+                    COUNTRY
+                  </span>
+                  <span
+                    style={{ fontSize: "13px", color: fg, fontWeight: 500 }}
+                  >
+                    {country}
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {(statusList.length > 0 ||
+            nsList.length > 0 ||
+            dnssec ||
+            whoisServer) && (
+            <div style={{ display: "flex", gap: "28px", flexWrap: "wrap" }}>
+              {statusList.length > 0 && (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "5px",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "10px",
+                      color: muted,
+                      fontWeight: 600,
+                      letterSpacing: "0.08em",
+                    }}
+                  >
+                    STATUS
+                  </span>
+                  <div
+                    style={{ display: "flex", gap: "4px", flexWrap: "wrap" }}
+                  >
+                    {statusList.map((s) => (
+                      <div
+                        key={s}
+                        style={{
+                          padding: "2px 7px",
+                          borderRadius: "4px",
+                          backgroundColor: subtleBg,
+                          fontSize: "10px",
+                          color: muted,
+                          fontWeight: 500,
+                          fontFamily: "monospace",
+                        }}
+                      >
+                        {s.trim()}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {nsList.length > 0 && (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "5px",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "10px",
+                      color: muted,
+                      fontWeight: 600,
+                      letterSpacing: "0.08em",
+                    }}
+                  >
+                    NAMESERVERS
+                  </span>
+                  <div
+                    style={{ display: "flex", gap: "4px", flexWrap: "wrap" }}
+                  >
+                    {nsList.map((n) => (
+                      <div
+                        key={n}
+                        style={{
+                          padding: "2px 7px",
+                          borderRadius: "4px",
+                          backgroundColor: subtleBg,
+                          fontSize: "10px",
+                          color: muted,
+                          fontWeight: 500,
+                          fontFamily: "monospace",
+                        }}
+                      >
+                        {n.trim()}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {dnssec && (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "5px",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "10px",
+                      color: muted,
+                      fontWeight: 600,
+                      letterSpacing: "0.08em",
+                    }}
+                  >
+                    DNSSEC
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "12px",
+                      color: muted,
+                      fontWeight: 500,
+                      fontFamily: "monospace",
+                    }}
+                  >
+                    {dnssec}
+                  </span>
+                </div>
+              )}
+              {whoisServer && (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "5px",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "10px",
+                      color: muted,
+                      fontWeight: 600,
+                      letterSpacing: "0.08em",
+                    }}
+                  >
+                    WHOIS SERVER
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "12px",
+                      color: muted,
+                      fontWeight: 500,
+                      fontFamily: "monospace",
+                    }}
+                  >
+                    {whoisServer}
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginTop: "4px",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <div
+                style={{
+                  width: "20px",
+                  height: "20px",
                   backgroundColor: fg,
                   color: bg,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  borderRadius: "8px",
-                  fontSize: "22px",
+                  borderRadius: "4px",
+                  fontSize: "11px",
                   fontWeight: 700,
                 }}
               >
                 W
               </div>
-              <span
-                style={{
-                  fontSize: "22px",
-                  fontWeight: 600,
-                  color: fg,
-                  letterSpacing: "0.05em",
-                }}
-              >
-                NEXT WHOIS
+              <span style={{ fontSize: "12px", color: muted, fontWeight: 500 }}>
+                next-whois-ui
               </span>
             </div>
-
-            {query ? (
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: "16px",
-                }}
-              >
-                <span
-                  style={{
-                    fontSize: Math.min(
-                      72,
-                      Math.max(
-                        36,
-                        Math.floor((1200 / Math.max(query.length, 1)) * 1.2),
-                      ),
-                    ),
-                    fontWeight: 700,
-                    color: fg,
-                    letterSpacing: "-0.02em",
-                    lineHeight: 1.1,
-                    textAlign: "center",
-                    wordBreak: "break-all",
-                  }}
-                >
-                  {query}
-                </span>
-                <div
-                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
-                >
-                  <div
-                    style={{
-                      padding: "4px 14px",
-                      borderRadius: "9999px",
-                      backgroundColor: typeBadge.bg,
-                      fontSize: "14px",
-                      color: typeBadge.fg,
-                      fontWeight: 600,
-                    }}
-                  >
-                    {`${queryType} Lookup`}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: "12px",
-                }}
-              >
-                <span
-                  style={{
-                    fontSize: "48px",
-                    fontWeight: 700,
-                    color: fg,
-                    letterSpacing: "-0.02em",
-                  }}
-                >
-                  WHOIS Lookup Tool
-                </span>
-                <span
-                  style={{
-                    fontSize: "18px",
-                    color: muted,
-                    textAlign: "center",
-                    maxWidth: "600px",
-                  }}
-                >
-                  Domain / IPv4 / IPv6 / ASN / CIDR
-                </span>
-              </div>
-            )}
-
+            <span style={{ fontSize: "11px", color: accent }}>
+              github.com/zmh-program/next-whois-ui
+            </span>
+          </div>
+        </div>
+      ) : (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "24px",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <div
               style={{
-                position: "absolute",
-                bottom: "30px",
+                width: "44px",
+                height: "44px",
+                backgroundColor: fg,
+                color: bg,
                 display: "flex",
                 alignItems: "center",
-                gap: "8px",
-                fontSize: "14px",
-                color: muted,
+                justifyContent: "center",
+                borderRadius: "8px",
+                fontSize: "22px",
+                fontWeight: 700,
               }}
             >
-              <span>next-whois-ui</span>
-              <span style={{ color: border }}>·</span>
-              <span style={{ color: accent }}>
-                github.com/zmh-program/next-whois-ui
+              W
+            </div>
+            <span
+              style={{
+                fontSize: "22px",
+                fontWeight: 600,
+                color: fg,
+                letterSpacing: "0.05em",
+              }}
+            >
+              NEXT WHOIS
+            </span>
+          </div>
+
+          {query ? (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "16px",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: Math.min(
+                    72,
+                    Math.max(
+                      36,
+                      Math.floor((1200 / Math.max(query.length, 1)) * 1.2),
+                    ),
+                  ),
+                  fontWeight: 700,
+                  color: fg,
+                  letterSpacing: "-0.02em",
+                  lineHeight: 1.1,
+                  textAlign: "center",
+                  wordBreak: "break-all",
+                }}
+              >
+                {query}
+              </span>
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "8px" }}
+              >
+                <div
+                  style={{
+                    padding: "4px 14px",
+                    borderRadius: "9999px",
+                    backgroundColor: typeBadge.bg,
+                    fontSize: "14px",
+                    color: typeBadge.fg,
+                    fontWeight: 600,
+                  }}
+                >
+                  {`${queryType} Lookup`}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "12px",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: "48px",
+                  fontWeight: 700,
+                  color: fg,
+                  letterSpacing: "-0.02em",
+                }}
+              >
+                WHOIS Lookup Tool
+              </span>
+              <span
+                style={{
+                  fontSize: "18px",
+                  color: muted,
+                  textAlign: "center",
+                  maxWidth: "600px",
+                }}
+              >
+                Domain / IPv4 / IPv6 / ASN / CIDR
               </span>
             </div>
+          )}
+
+          <div
+            style={{
+              position: "absolute",
+              bottom: "30px",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              fontSize: "14px",
+              color: muted,
+            }}
+          >
+            <span>next-whois-ui</span>
+            <span style={{ color: border }}>·</span>
+            <span style={{ color: accent }}>
+              github.com/zmh-program/next-whois-ui
+            </span>
           </div>
-        )}
-      </div>
-    ),
+        </div>
+      )}
+    </div>,
     { width: w, height: h },
   );
 }
