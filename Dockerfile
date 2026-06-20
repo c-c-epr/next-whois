@@ -1,5 +1,4 @@
-# create a nexjs dockerfile template
-FROM node:18-alpine
+FROM node:22.13-alpine
 
 WORKDIR /app
 
