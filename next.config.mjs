@@ -2,6 +2,7 @@ import setupPWA from 'next-pwa';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   turbopack: {},
   reactStrictMode: true,
   transpilePackages: ['whoiser'],
