@@ -33,7 +33,7 @@ export function LanguageSwitcher() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className="group inline-flex items-center justify-center rounded-full p-2 pr-0">
-          <RiEarthFill className="h-[1rem] w-[1rem] group-hover:scale-110 transition-all duration-300" />
+          <RiEarthFill className="h-4 w-4 group-hover:scale-110 transition-all duration-300" />
           <span className="sr-only">Language</span>
         </button>
       </DropdownMenuTrigger>

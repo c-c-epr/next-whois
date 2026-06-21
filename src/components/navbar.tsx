@@ -50,11 +50,9 @@ export function ThemeToggle() {
           exit={{ opacity: 0, rotate: 180 }}
           transition={{ duration: 0.2 }}
         >
-          {theme === "light" && <RiSunFill className="h-[1rem] w-[1rem]" />}
-          {theme === "dark" && <RiMoonFill className="h-[1rem] w-[1rem]" />}
-          {theme === "system" && (
-            <RiSmartphoneFill className="h-[1rem] w-[1rem]" />
-          )}
+          {theme === "light" && <RiSunFill className="h-4 w-4" />}
+          {theme === "dark" && <RiMoonFill className="h-4 w-4" />}
+          {theme === "system" && <RiSmartphoneFill className="h-4 w-4" />}
         </motion.div>
       </AnimatePresence>
       <span className="sr-only">Toggle theme</span>
@@ -71,7 +69,7 @@ export function Navbar() {
       <nav
         className={cn(
           "mt-4 px-2 h-10 rounded-full",
-          "bg-background shadow-sm",
+          "bg-background shadow-xs",
           "flex items-center gap-6",
           "transition-all duration-300 ease-in-out",
           "border border-primary/25 border-dashed",
@@ -87,7 +85,7 @@ export function Navbar() {
           <p className="text-xs text-muted-foreground ml-1.5">{VERSION}</p>
         </Link>
 
-        <div className="h-4 w-[1px] bg-primary/10" />
+        <div className="h-4 w-px bg-primary/10" />
 
         <Link
           href="/docs"
@@ -96,7 +94,7 @@ export function Navbar() {
           API
         </Link>
 
-        <div className="h-4 w-[1px] bg-primary/10" />
+        <div className="h-4 w-px bg-primary/10" />
 
         <div className="flex items-center gap-3">
           <ThemeToggle />
@@ -106,7 +104,7 @@ export function Navbar() {
             target="_blank"
             className="inline-flex items-center justify-center rounded-full p-2 hover:scale-110 transition-all duration-300"
           >
-            <RiGithubFill className="h-[1rem] w-[1rem]" />
+            <RiGithubFill className="h-4 w-4" />
             <span className="sr-only">GitHub</span>
           </Link>
         </div>

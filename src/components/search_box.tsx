@@ -464,7 +464,7 @@ export function SearchBox({
         <Input
           ref={inputRef}
           id="main-search-input"
-          className="w-full text-left pl-12 pr-12 transition-all duration-300 hover:shadow focus-visible:ring-primary/20 focus-visible:ring-offset-0"
+          className="w-full text-left pl-12 pr-12 transition-all duration-300 hover:shadow-sm focus-visible:ring-primary/20 focus-visible:ring-offset-0"
           placeholder={t("search_placeholder")}
           value={inputValue}
           onChange={handleInputChange}
@@ -497,7 +497,7 @@ export function SearchBox({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.1 }}
-            className="absolute z-50 w-full mt-1 bg-background/95 backdrop-blur-sm rounded-lg border shadow-lg overflow-hidden divide-y divide-border/50"
+            className="absolute z-50 w-full mt-1 bg-background/95 backdrop-blur-xs rounded-lg border shadow-lg overflow-hidden divide-y divide-border/50"
           >
             {suggestions.map((group, groupIndex) => (
               <div key={group.type} className="relative">
@@ -528,7 +528,7 @@ export function SearchBox({
                         ) : (
                           <RiLinkM className="w-3.5 h-3.5 mr-2 text-muted-foreground/50 group-hover:text-muted-foreground/70 transition-colors duration-150" />
                         )}
-                        <span className="flex-grow text-sm text-foreground/80 group-hover:text-foreground transition-colors duration-150">
+                        <span className="grow text-sm text-foreground/80 group-hover:text-foreground transition-colors duration-150">
                           {suggestion}
                         </span>
                         <Badge
