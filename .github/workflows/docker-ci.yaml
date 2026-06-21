@@ -179,3 +179,52 @@ jobs:
             "${tag_args[@]}" \
             "${IMAGE}@${AMD64_DIGEST}" \
             "${IMAGE}@${ARM64_DIGEST}"
+
+  zeabur-deploy:
+    name: Update Zeabur image tag
+    needs: publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: ${{ github.event_name == 'push' && github.ref_name == github.event.repository.default_branch }}
+    steps:
+      - name: Validate Zeabur config
+        env:
+          ZEABUR_TOKEN: ${{ secrets.ZEABUR_TOKEN }}
+          ZEABUR_SERVICE_ID: ${{ vars.ZEABUR_SERVICE_ID }}
+          ZEABUR_ENVIRONMENT_ID: ${{ vars.ZEABUR_ENVIRONMENT_ID }}
+        shell: bash
+        run: |
+          test -n "${ZEABUR_TOKEN}"
+          test -n "${ZEABUR_SERVICE_ID}"
+          test -n "${ZEABUR_ENVIRONMENT_ID}"
+
+      - name: Update Zeabur image tag
+        env:
+          ZEABUR_TOKEN: ${{ secrets.ZEABUR_TOKEN }}
+          ZEABUR_SERVICE_ID: ${{ vars.ZEABUR_SERVICE_ID }}
+          ZEABUR_ENVIRONMENT_ID: ${{ vars.ZEABUR_ENVIRONMENT_ID }}
+        shell: bash
+        run: |
+          zeabur_image_tag="sha-${GITHUB_SHA::12}"
+          query='mutation UpdateServiceImageTag($serviceId: ObjectID!, $environmentId: ObjectID!, $tag: String!) { updateServiceImageTag(serviceID: $serviceId, environmentID: $environmentId, tag: $tag) }'
+
+          response="$(
+            jq -n \
+              --arg query "${query}" \
+              --arg serviceId "${ZEABUR_SERVICE_ID}" \
+              --arg environmentId "${ZEABUR_ENVIRONMENT_ID}" \
+              --arg tag "${zeabur_image_tag}" \
+              '{query: $query, variables: {serviceId: $serviceId, environmentId: $environmentId, tag: $tag}}' |
+            curl --fail-with-body -sS -X POST \
+            -H "Authorization: Bearer ${ZEABUR_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --data-binary @- \
+            https://api.zeabur.com/graphql
+          )"
+
+          if ! echo "${response}" | jq -e ".errors == null" > /dev/null; then
+            echo "${response}" | jq .
+            exit 1
+          fi
+
+          echo "Updated Zeabur image tag to ${zeabur_image_tag}"
