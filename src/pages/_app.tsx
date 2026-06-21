@@ -62,7 +62,7 @@ export default function App({ Component, pageProps }: AppProps) {
         />
         <div className="fixed inset-0 -z-10">
           <div className="absolute inset-0 bg-dot-pattern opacity-10" />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/20 to-background" />
+          <div className="absolute inset-0 bg-linear-to-b from-transparent via-background/20 to-background" />
         </div>
         <div className="relative w-full min-h-screen font-sans">
           <Navbar />

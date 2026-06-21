@@ -32,7 +32,7 @@ export default function RichTextarea({
     <div className={cn(`flex flex-col space-y-1.5`, className)}>
       <div className={`flex flex-row items-center`}>
         <p className={`text-sm text-secondary font-medium`}>{displayName}</p>
-        <div className={`flex-grow`} />
+        <div className={`grow`} />
         <Button
           variant={`outline`}
           size={`icon-sm`}
