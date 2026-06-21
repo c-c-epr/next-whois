@@ -1099,7 +1099,7 @@ function ResponsePanel({
               className={cn(
                 "px-2.5 py-1 rounded text-[11px] font-mono transition-colors",
                 activeTab === "whois"
-                  ? "bg-background dark:bg-zinc-800 text-foreground shadow-sm"
+                  ? "bg-background dark:bg-zinc-800 text-foreground shadow-xs"
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
@@ -1112,7 +1112,7 @@ function ResponsePanel({
               className={cn(
                 "px-2.5 py-1 rounded text-[11px] font-mono transition-colors",
                 activeTab === "rdap"
-                  ? "bg-background dark:bg-zinc-800 text-foreground shadow-sm"
+                  ? "bg-background dark:bg-zinc-800 text-foreground shadow-xs"
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
@@ -1365,13 +1365,13 @@ export default function LookupPage({
                     </span>
                   </Link>
                 )}
-              <div className="flex-grow" />
+              <div className="grow" />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="outline"
                     size="icon-sm"
-                    className="transition hover:border-muted-foreground shadow-sm"
+                    className="transition hover:border-muted-foreground shadow-xs"
                     tapEnabled
                   >
                     <RiShareLine className="w-4 h-4" />
