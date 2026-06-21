@@ -1,15 +1,17 @@
 import React from "react";
 
+type IconProps = React.SVGProps<SVGSVGElement>;
+
 type Icon = {
-  icon: React.ReactElement;
+  icon: React.ReactElement<IconProps>;
   className?: string;
   id?: string;
-} & React.SVGProps<SVGSVGElement>;
+} & IconProps;
 
 function Icon({ icon, className, id, ...props }: Icon) {
   return React.cloneElement(icon, {
-    className: className,
-    id: id,
+    className,
+    id,
     ...props,
   });
 }
