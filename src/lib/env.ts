@@ -1,4 +1,4 @@
-export const VERSION = "1.6";
+export { version as VERSION } from "../../package.json";
 
 export const HISTORY_LIMIT: number = intEnv("NEXT_PUBLIC_HISTORY_LIMIT", -1);
 
