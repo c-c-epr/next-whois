@@ -147,10 +147,11 @@ jobs:
           {
             echo "tags<<EOF"
             echo "${image}:${tag}"
-            echo "${image}:sha-${GITHUB_SHA::12}"
-
             if [ "${GITHUB_REF_NAME}" = "${DEFAULT_BRANCH}" ]; then
+              echo "${image}:sha-${GITHUB_SHA::12}"
               echo "${image}:latest"
+            else
+              echo "${image}:pre-${GITHUB_SHA::12}"
             fi
 
             echo "EOF"
