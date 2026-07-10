@@ -8,3 +8,10 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      actions:
+        patterns:
+          - "actions/*"
+      docker:
+        patterns:
+          - "docker/*"
