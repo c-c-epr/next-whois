@@ -45,7 +45,7 @@
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-hotkeys-hook": "^5.3.3",
-    "react-i18next": "^17.0.8",
+    "react-i18next": "^17.0.9",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.6.0",
     "tailwindcss-animate": "^1.0.7",
