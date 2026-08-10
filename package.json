@@ -46,7 +46,7 @@
     "react-dom": "^19.2.8",
     "react-hotkeys-hook": "^5.3.3",
     "react-i18next": "^17.0.11",
-    "sonner": "^2.0.7",
+    "sonner": "^2.0.8",
     "tailwind-merge": "^3.6.0",
     "tailwindcss-animate": "^1.0.7",
     "tldts": "^7.4.10",
@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
-    "@types/node": "^26.1.2",
+    "@types/node": "^26.2.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "postcss": "^8.5.26",
