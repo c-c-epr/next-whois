@@ -10,7 +10,7 @@ RUN npm install -g corepack@${COREPACK_VERSION} \
 
 FROM base AS deps
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml node-rdap-0.5.0-patch.0.tgz ./
 RUN pnpm install --frozen-lockfile
 
 FROM deps AS builder
