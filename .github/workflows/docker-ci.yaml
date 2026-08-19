@@ -70,6 +70,40 @@ jobs:
           cache-from: type=gha,scope=image-linux-amd64
           cache-to: type=gha,mode=max,scope=image-linux-amd64
 
+      - name: Smoke test image
+        shell: bash
+        env:
+          IMAGE: ${{ steps.image.outputs.name }}@${{ steps.build.outputs.digest }}
+        run: |
+          set -euo pipefail
+
+          container="next-whois-smoke-${GITHUB_RUN_ID}"
+          cleanup() {
+            docker rm -f "${container}" >/dev/null 2>&1 || true
+          }
+          trap cleanup EXIT
+
+          docker run --detach --name "${container}" "${IMAGE}"
+
+          for attempt in {1..30}; do
+            status="$(docker inspect --format '{{.State.Health.Status}}' "${container}")"
+            case "${status}" in
+              healthy)
+                exit 0
+                ;;
+              unhealthy)
+                docker logs "${container}"
+                docker inspect --format '{{json .State.Health.Log}}' "${container}"
+                exit 1
+                ;;
+            esac
+            sleep 2
+          done
+
+          docker logs "${container}"
+          docker inspect --format '{{json .State.Health.Log}}' "${container}"
+          exit 1
+
   build-arm64:
     name: Build image (linux/arm64)
     needs: ci
@@ -115,6 +149,40 @@ jobs:
           build-args: NODE_VERSION=${{ steps.node.outputs.version }}
           cache-from: type=gha,scope=image-linux-arm64
           cache-to: type=gha,mode=max,scope=image-linux-arm64
+
+      - name: Smoke test image
+        shell: bash
+        env:
+          IMAGE: ${{ steps.image.outputs.name }}@${{ steps.build.outputs.digest }}
+        run: |
+          set -euo pipefail
+
+          container="next-whois-smoke-${GITHUB_RUN_ID}"
+          cleanup() {
+            docker rm -f "${container}" >/dev/null 2>&1 || true
+          }
+          trap cleanup EXIT
+
+          docker run --detach --name "${container}" "${IMAGE}"
+
+          for attempt in {1..30}; do
+            status="$(docker inspect --format '{{.State.Health.Status}}' "${container}")"
+            case "${status}" in
+              healthy)
+                exit 0
+                ;;
+              unhealthy)
+                docker logs "${container}"
+                docker inspect --format '{{json .State.Health.Log}}' "${container}"
+                exit 1
+                ;;
+            esac
+            sleep 2
+          done
+
+          docker logs "${container}"
+          docker inspect --format '{{json .State.Health.Log}}' "${container}"
+          exit 1
 
   publish:
     name: Publish multi-platform manifest
