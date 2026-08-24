@@ -96,8 +96,8 @@ importers:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       node-rdap:
-        specifier: ^0.5.0
-        version: 0.5.0
+        specifier: github:Appraise-Package/node-rdap#package
+        version: https://codeload.github.com/Appraise-Package/node-rdap/tar.gz/e1ec9452bfb6b601f3ff60cf065f7f2271ff5160
       react:
         specifier: ^19.2.8
         version: 19.2.8
@@ -2913,8 +2913,9 @@ packages:
     resolution: {integrity: sha512-t1QzWwnk4sjLWaQAS8CHgOJ+RAfmHpxFWmc36IWTiWHQfs0w5JDMBS1b1ZxQteo0vVVuWJvIUKHDkkeK7vIGCg==}
     engines: {node: '>= 8.0.0'}
 
-  node-rdap@0.5.0:
-    resolution: {integrity: sha512-x1GVdIzZqDBkCKxc9eEe8O8C4nugr8olVWBb8XNDVmND5wfDtYe6if42rtmL9Zi5sdfMaVhNCXJfHBJrUtjPlQ==}
+  node-rdap@https://codeload.github.com/Appraise-Package/node-rdap/tar.gz/e1ec9452bfb6b601f3ff60cf065f7f2271ff5160:
+    resolution: {gitHosted: true, integrity: sha512-L962Q+tJs1U/GOaH4yq6tH6niX72z5I2I56bj+/sioaLHhJa3C9gYLsUAvgXbSfZPLex0m0SO0jp03T3y4gFmQ==, tarball: https://codeload.github.com/Appraise-Package/node-rdap/tar.gz/e1ec9452bfb6b601f3ff60cf065f7f2271ff5160}
+    version: 0.5.0
     engines: {node: '>=20.19.0 || >=22.12.0'}
 
   node-releases@2.0.53:
@@ -6484,7 +6485,7 @@ snapshots:
     dependencies:
       clone: 2.1.2
 
-  node-rdap@0.5.0:
+  node-rdap@https://codeload.github.com/Appraise-Package/node-rdap/tar.gz/e1ec9452bfb6b601f3ff60cf065f7f2271ff5160:
     dependencies:
       '@dcoffey-zengenti/punynode': 0.1.0
       commander: 14.0.0
