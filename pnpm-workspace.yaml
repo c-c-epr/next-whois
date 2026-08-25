@@ -1,5 +1,5 @@
 allowBuilds:
-  node-rdap@https://codeload.github.com/Appraise-Package/node-rdap/tar.gz/e1ec9452bfb6b601f3ff60cf065f7f2271ff5160: true
+  node-rdap@git+https://github.com/Appraise-Package/node-rdap.git: true
   sharp: true
 
 minimumReleaseAge: 1440
