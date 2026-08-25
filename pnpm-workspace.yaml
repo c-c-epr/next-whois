@@ -1,5 +1,6 @@
 allowBuilds:
   sharp: true
+  node-rdap: true
 
 minimumReleaseAge: 1440
 overrides:
