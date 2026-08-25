@@ -96,7 +96,7 @@ importers:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       node-rdap:
-        specifier: github:Appraise-Package/node-rdap#package
+        specifier: https://codeload.github.com/Appraise-Package/node-rdap/tar.gz/e1ec9452bfb6b601f3ff60cf065f7f2271ff5160
         version: https://codeload.github.com/Appraise-Package/node-rdap/tar.gz/e1ec9452bfb6b601f3ff60cf065f7f2271ff5160
       react:
         specifier: ^19.2.8
@@ -2914,7 +2914,7 @@ packages:
     engines: {node: '>= 8.0.0'}
 
   node-rdap@https://codeload.github.com/Appraise-Package/node-rdap/tar.gz/e1ec9452bfb6b601f3ff60cf065f7f2271ff5160:
-    resolution: {gitHosted: true, tarball: https://codeload.github.com/Appraise-Package/node-rdap/tar.gz/e1ec9452bfb6b601f3ff60cf065f7f2271ff5160}
+    resolution: {tarball: https://codeload.github.com/Appraise-Package/node-rdap/tar.gz/e1ec9452bfb6b601f3ff60cf065f7f2271ff5160}
     version: 0.5.0
     engines: {node: '>=20.19.0 || >=22.12.0'}
 
