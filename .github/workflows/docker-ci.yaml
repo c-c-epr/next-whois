@@ -11,6 +11,8 @@ on:
 permissions:
   contents: read
   packages: write
+  deployments: write
+  statuses: write
 
 concurrency:
   group: docker-${{ github.ref }}
@@ -272,6 +274,36 @@ jobs:
     timeout-minutes: 10
     if: ${{ github.event_name == 'push' && github.ref_name == github.event.repository.default_branch }}
     steps:
+      - name: Create GitHub deployment
+        id: deployment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const result = await github.rest.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.sha,
+              environment: 'production',
+              production_environment: true,
+              auto_merge: false,
+              required_contexts: [],
+              transient_environment: false
+            });
+
+            core.setOutput('deployment_id', result.data.id);
+
+      - name: Mark deployment in progress
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: '${{ steps.deployment.outputs.deployment_id }}',
+              state: 'in_progress',
+              description: 'Starting production deployment'
+            });
+
       - name: Validate Zeabur config
         env:
           ZEABUR_TOKEN: ${{ secrets.ZEABUR_TOKEN }}
@@ -313,3 +345,30 @@ jobs:
           fi
 
           echo "Updated Zeabur image tag to ${zeabur_image_tag}"
+
+      - name: Mark deployment success
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: '${{ steps.deployment.outputs.deployment_id }}',
+              state: 'success',
+              environment_url: 'https://who.zmh.me',
+              description: 'Production deployment successful'
+            });
+
+      - name: Mark deployment failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: '${{ steps.deployment.outputs.deployment_id }}',
+              state: 'failure',
+              description: 'Production deployment failed'
+            });
