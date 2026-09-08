@@ -3,7 +3,7 @@ FROM node:${NODE_VERSION}-alpine AS base
 
 WORKDIR /app
 
-RUN wget -qO- https://get.pnpm.io/install.sh | env ENV="$HOME/.bashrc" SHELL="$(which bash)" bash -
+RUN wget -qO- https://get.pnpm.io/install.sh | env ENV="$HOME/.shrc" SHELL="$(which sh)" sh -
 
 FROM base AS deps
 
