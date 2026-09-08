@@ -1,12 +1,9 @@
 ARG NODE_VERSION=22.13.0
 FROM node:${NODE_VERSION}-alpine AS base
 
-ARG COREPACK_VERSION=0.33.0
-
 WORKDIR /app
 
-RUN npm install -g corepack@${COREPACK_VERSION} \
- && corepack enable
+RUN wget -qO- https://get.pnpm.io/install.sh | env ENV="$HOME/.bashrc" SHELL="$(which bash)" bash -
 
 FROM base AS deps
 
