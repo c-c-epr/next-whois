@@ -1,0 +1,484 @@
+diff --git a/dist/tsc/client.js b/dist/tsc/client.js
+index f4aac364444ec7dbf94189e3165fe17586f703c5..2d1a61215c3fcae42ed70c265895eae98c129651 100644
+--- a/dist/tsc/client.js
++++ b/dist/tsc/client.js
+@@ -1,34 +1,20 @@
+ import { autnumCache, dnsCache, ipv4Cache, ipv6Cache } from "./cache/index.js";
++import { requestJson } from "./utils/request.js";
+ import { getTopLevelDomain, isFullyQualifiedDomainName, } from "./utils/domain.js";
+-const resolveRdapServerByDomain = async (domain) => {
+-    const topLevelDomain = getTopLevelDomain(domain);
+-    if (!topLevelDomain) {
+-        throw new Error("Could not parse the top level domain.");
+-    }
+-    const rdapServer = await dnsCache.get(topLevelDomain);
+-    if (!rdapServer) {
+-        throw new Error("RDAP Server for the given top level domain could not be found.");
+-    }
+-    return rdapServer;
+-};
+ export const domain = async (fqdn) => {
+     const normalizedFqdn = fqdn.trim().toLowerCase();
+     if (!isFullyQualifiedDomainName(normalizedFqdn)) {
+         throw new Error("The given domain could not be validated.");
+     }
+     try {
+-        const rdapServer = await resolveRdapServerByDomain(normalizedFqdn);
+-        const requestUrl = `${rdapServer}/domain/${normalizedFqdn}`;
+-        const response = await fetch(requestUrl, {
+-            headers: {
+-                accept: "application/json,application/rdap+json",
+-            },
+-        });
+-        if (!response.ok) {
+-            throw new Error(`RDAP server responded with status ${response.status}: ${response.statusText}`);
++        // Since we already did isFullyQualifiedDomainName above, we don't need to check for null here.
++        const topLevelDomain = getTopLevelDomain(normalizedFqdn);
++        const rdapServer = await dnsCache.get(topLevelDomain);
++        if (!rdapServer) {
++            throw new Error("RDAP Server for the given top level domain could not be found.");
+         }
+-        const data = (await response.json());
+-        return data;
++        const requestUrl = `${rdapServer}/domain/${normalizedFqdn}`;
++        return await requestJson(requestUrl);
+     }
+     catch (error) {
+         throw new Error(`Failed to fetch RDAP domain data: ${error.message}`);
+@@ -43,11 +29,7 @@ export const ip = async (ip) => {
+         throw new Error("RDAP Server for the given IP Address could not be found.");
+     }
+     const requestUrl = `${rdapServer}/ip/${ip}`;
+-    return (await (await fetch(requestUrl, {
+-        headers: {
+-            accept: "application/json,application/rdap+json",
+-        },
+-    })).json());
++    return await requestJson(requestUrl);
+ };
+ export const autnum = async (autnum) => {
+     const rdapServer = await autnumCache.get(autnum);
+@@ -55,10 +37,6 @@ export const autnum = async (autnum) => {
+         throw new Error("RDAP Server for the given Autonomous System Number could not be found.");
+     }
+     const requestUrl = `${rdapServer}/autnum/${autnum}`;
+-    return (await (await fetch(requestUrl, {
+-        headers: {
+-            accept: "application/json,application/rdap+json",
+-        },
+-    })).json());
++    return await requestJson(requestUrl);
+ };
+ //# sourceMappingURL=client.js.map
+\ No newline at end of file
+diff --git a/dist/tsc/client.js.map b/dist/tsc/client.js.map
+index 059039fd7e98c87aec80e33afc1a11e9008b6d8c..893279bf72d2eed3bf62f33637ae459b734631d6 100644
+--- a/dist/tsc/client.js.map
++++ b/dist/tsc/client.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"client.js","sourceRoot":"","sources":["../../src/client.ts"],"names":[],"mappings":"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"}
+\ No newline at end of file
++{"version":3,"file":"client.js","sourceRoot":"","sources":["../../src/client.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,WAAW,EAAE,QAAQ,EAAE,SAAS,EAAE,SAAS,EAAE,MAAM,kBAAkB,CAAC;AAC/E,OAAO,EAAE,WAAW,EAAE,MAAM,oBAAoB,CAAC;AAMjD,OAAO,EACN,iBAAiB,EACjB,0BAA0B,GAC1B,MAAM,mBAAmB,CAAC;AAS3B,MAAM,CAAC,MAAM,MAAM,GAAG,KAAK,EAAE,IAAY,EAA+B,EAAE;IACzE,MAAM,cAAc,GAAG,IAAI,CAAC,IAAI,EAAE,CAAC,WAAW,EAAE,CAAC;IACjD,IAAI,CAAC,0BAA0B,CAAC,cAAc,CAAC,EAAE,CAAC;QACjD,MAAM,IAAI,KAAK,CAAC,0CAA0C,CAAC,CAAC;IAC7D,CAAC;IAED,IAAI,CAAC;QACJ,+FAA+F;QAC/F,MAAM,cAAc,GAAG,iBAAiB,CAAC,cAAc,CAAE,CAAC;QAE1D,MAAM,UAAU,GAAG,MAAM,QAAQ,CAAC,GAAG,CAAC,cAAc,CAAC,CAAC;QACtD,IAAI,CAAC,UAAU,EAAE,CAAC;YACjB,MAAM,IAAI,KAAK,CACd,gEAAgE,CAChE,CAAC;QACH,CAAC;QACD,MAAM,UAAU,GAAG,GAAG,UAAU,WAAW,cAAc,EAAE,CAAC;QAC5D,OAAO,MAAM,WAAW,CAAqB,UAAU,CAAC,CAAC;IAC1D,CAAC;IAAC,OAAO,KAAK,EAAE,CAAC;QAChB,MAAM,IAAI,KAAK,CACd,qCAAsC,KAAe,CAAC,OAAO,EAAE,CAC/D,CAAC;IACH,CAAC;AACF,CAAC,CAAC;AAEF,MAAM,CAAC,MAAM,EAAE,GAAG,KAAK,EAAE,EAAU,EAAE,EAAE;IACtC,2BAA2B;IAE3B,MAAM,MAAM,GAAG,EAAE,CAAC,QAAQ,CAAC,GAAG,CAAC,CAAC;IAChC,MAAM,KAAK,GAAG,MAAM,CAAC,CAAC,CAAC,SAAS,CAAC,CAAC,CAAC,SAAS,CAAC;IAE7C,MAAM,UAAU,GAAG,MAAM,KAAK,CAAC,GAAG,CAAC,EAAE,CAAC,CAAC;IACvC,IAAI,CAAC,UAAU,EAAE,CAAC;QACjB,MAAM,IAAI,KAAK,CAAC,0DAA0D,CAAC,CAAC;IAC7E,CAAC;IAED,MAAM,UAAU,GAAG,GAAG,UAAU,OAAO,EAAE,EAAE,CAAC;IAC5C,OAAO,MAAM,WAAW,CAAiB,UAAU,CAAC,CAAC;AACtD,CAAC,CAAC;AAEF,MAAM,CAAC,MAAM,MAAM,GAAG,KAAK,EAAE,MAAc,EAAE,EAAE;IAC9C,MAAM,UAAU,GAAG,MAAM,WAAW,CAAC,GAAG,CAAC,MAAM,CAAC,CAAC;IACjD,IAAI,CAAC,UAAU,EAAE,CAAC;QACjB,MAAM,IAAI,KAAK,CACd,wEAAwE,CACxE,CAAC;IACH,CAAC;IAED,MAAM,UAAU,GAAG,GAAG,UAAU,WAAW,MAAM,EAAE,CAAC;IACpD,OAAO,MAAM,WAAW,CAAqB,UAAU,CAAC,CAAC;AAC1D,CAAC,CAAC"}
+\ No newline at end of file
+diff --git a/dist/tsc/tests/domain.test.js b/dist/tsc/tests/domain.test.js
+index dfe3b13d4954cedd84fc2e7e2a1eebc4a8dbb5d3..b9a7139fdcdc23ba2d97569a752ffb336be1c815 100644
+--- a/dist/tsc/tests/domain.test.js
++++ b/dist/tsc/tests/domain.test.js
+@@ -8,15 +8,22 @@ describe("client querying a domain", () => {
+         expect(result).not.toBeNull();
+         result = await domain("contensis.com");
+         expect(result).not.toBeNull();
++        result = await domain("google.com.tw");
++        expect(result).not.toBeNull();
++        result = await domain("google.tw");
++        expect(result).not.toBeNull();
+     });
+     test("should return error for invalid TLD", async () => {
+         await expect(domain("insytful.badger")).rejects.toThrow("Failed to fetch RDAP domain data");
+         await expect(domain("insytful.eggs")).rejects.toThrow("Failed to fetch RDAP domain data");
+         await expect(domain("contensis.contensis")).rejects.toThrow("Failed to fetch RDAP domain data");
+     });
+-    test("should return null for non-existant domain", async () => {
++    test("should return error for non-existant domain", async () => {
+         await expect(domain("insytful-contensis-party-time.com")).rejects.toThrow("Failed to fetch RDAP domain data");
+         await expect(domain("insytful-contensis-party-time.co.uk")).rejects.toThrow("Failed to fetch RDAP domain data");
+     });
++    test('should return error for invalid FQDN', async () => {
++        await expect(domain("insytful")).rejects.toThrow("The given domain could not be validated.");
++    });
+ });
+ //# sourceMappingURL=domain.test.js.map
+\ No newline at end of file
+diff --git a/dist/tsc/tests/domain.test.js.map b/dist/tsc/tests/domain.test.js.map
+index 07c9145e78e4fe8a7dfb292a951e3e9b84ebd780..3119ce75479bad904e2341edc25f7ac384fe802c 100644
+--- a/dist/tsc/tests/domain.test.js.map
++++ b/dist/tsc/tests/domain.test.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"domain.test.js","sourceRoot":"","sources":["../../../src/tests/domain.test.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAE,MAAM,cAAc,CAAC;AAGtC,QAAQ,CAAC,0BAA0B,EAAE,GAAG,EAAE;IACzC,IAAI,CAAC,sCAAsC,EAAE,KAAK,IAAI,EAAE;QACvD,IAAI,MAAM,GAA8B,IAAI,CAAC;QAC7C,MAAM,GAAG,MAAM,MAAM,CAAC,cAAc,CAAC,CAAC;QACtC,MAAM,CAAC,MAAM,CAAC,CAAC,GAAG,CAAC,QAAQ,EAAE,CAAC;QAC9B,MAAM,GAAG,MAAM,MAAM,CAAC,gBAAgB,CAAC,CAAC;QACxC,MAAM,CAAC,MAAM,CAAC,CAAC,GAAG,CAAC,QAAQ,EAAE,CAAC;QAC9B,MAAM,GAAG,MAAM,MAAM,CAAC,eAAe,CAAC,CAAC;QACvC,MAAM,CAAC,MAAM,CAAC,CAAC,GAAG,CAAC,QAAQ,EAAE,CAAC;IAC/B,CAAC,CAAC,CAAC;IAEH,IAAI,CAAC,qCAAqC,EAAE,KAAK,IAAI,EAAE;QACtD,MAAM,MAAM,CAAC,MAAM,CAAC,iBAAiB,CAAC,CAAC,CAAC,OAAO,CAAC,OAAO,CACtD,kCAAkC,CAClC,CAAC;QACF,MAAM,MAAM,CAAC,MAAM,CAAC,eAAe,CAAC,CAAC,CAAC,OAAO,CAAC,OAAO,CACpD,kCAAkC,CAClC,CAAC;QACF,MAAM,MAAM,CAAC,MAAM,CAAC,qBAAqB,CAAC,CAAC,CAAC,OAAO,CAAC,OAAO,CAC1D,kCAAkC,CAClC,CAAC;IACH,CAAC,CAAC,CAAC;IAEH,IAAI,CAAC,4CAA4C,EAAE,KAAK,IAAI,EAAE;QAC7D,MAAM,MAAM,CAAC,MAAM,CAAC,mCAAmC,CAAC,CAAC,CAAC,OAAO,CAAC,OAAO,CACxE,kCAAkC,CAClC,CAAC;QACF,MAAM,MAAM,CAAC,MAAM,CAAC,qCAAqC,CAAC,CAAC,CAAC,OAAO,CAAC,OAAO,CAC1E,kCAAkC,CAClC,CAAC;IACH,CAAC,CAAC,CAAC;AACJ,CAAC,CAAC,CAAC"}
+\ No newline at end of file
++{"version":3,"file":"domain.test.js","sourceRoot":"","sources":["../../../src/tests/domain.test.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAE,MAAM,cAAc,CAAC;AAGtC,QAAQ,CAAC,0BAA0B,EAAE,GAAG,EAAE;IACzC,IAAI,CAAC,sCAAsC,EAAE,KAAK,IAAI,EAAE;QACvD,IAAI,MAAM,GAA8B,IAAI,CAAC;QAC7C,MAAM,GAAG,MAAM,MAAM,CAAC,cAAc,CAAC,CAAC;QACtC,MAAM,CAAC,MAAM,CAAC,CAAC,GAAG,CAAC,QAAQ,EAAE,CAAC;QAC9B,MAAM,GAAG,MAAM,MAAM,CAAC,gBAAgB,CAAC,CAAC;QACxC,MAAM,CAAC,MAAM,CAAC,CAAC,GAAG,CAAC,QAAQ,EAAE,CAAC;QAC9B,MAAM,GAAG,MAAM,MAAM,CAAC,eAAe,CAAC,CAAC;QACvC,MAAM,CAAC,MAAM,CAAC,CAAC,GAAG,CAAC,QAAQ,EAAE,CAAC;QAC9B,MAAM,GAAG,MAAM,MAAM,CAAC,eAAe,CAAC,CAAC;QACvC,MAAM,CAAC,MAAM,CAAC,CAAC,GAAG,CAAC,QAAQ,EAAE,CAAC;QAC9B,MAAM,GAAG,MAAM,MAAM,CAAC,WAAW,CAAC,CAAC;QACnC,MAAM,CAAC,MAAM,CAAC,CAAC,GAAG,CAAC,QAAQ,EAAE,CAAC;IAC/B,CAAC,CAAC,CAAC;IAEH,IAAI,CAAC,qCAAqC,EAAE,KAAK,IAAI,EAAE;QACtD,MAAM,MAAM,CAAC,MAAM,CAAC,iBAAiB,CAAC,CAAC,CAAC,OAAO,CAAC,OAAO,CACtD,kCAAkC,CAClC,CAAC;QACF,MAAM,MAAM,CAAC,MAAM,CAAC,eAAe,CAAC,CAAC,CAAC,OAAO,CAAC,OAAO,CACpD,kCAAkC,CAClC,CAAC;QACF,MAAM,MAAM,CAAC,MAAM,CAAC,qBAAqB,CAAC,CAAC,CAAC,OAAO,CAAC,OAAO,CAC1D,kCAAkC,CAClC,CAAC;IACH,CAAC,CAAC,CAAC;IAEH,IAAI,CAAC,6CAA6C,EAAE,KAAK,IAAI,EAAE;QAC9D,MAAM,MAAM,CAAC,MAAM,CAAC,mCAAmC,CAAC,CAAC,CAAC,OAAO,CAAC,OAAO,CACxE,kCAAkC,CAClC,CAAC;QACF,MAAM,MAAM,CAAC,MAAM,CAAC,qCAAqC,CAAC,CAAC,CAAC,OAAO,CAAC,OAAO,CAC1E,kCAAkC,CAClC,CAAC;IACH,CAAC,CAAC,CAAC;IAEH,IAAI,CAAC,sCAAsC,EAAE,KAAK,IAAI,EAAE;QACvD,MAAM,MAAM,CAAC,MAAM,CAAC,UAAU,CAAC,CAAC,CAAC,OAAO,CAAC,OAAO,CAC/C,0CAA0C,CAC1C,CAAC;IAEH,CAAC,CAAC,CAAC;AACJ,CAAC,CAAC,CAAC"}
+\ No newline at end of file
+diff --git a/dist/tsc/tests/ip.test.js b/dist/tsc/tests/ip.test.js
+index d3ec86ca20b43c5bfcf604160faf4699ae04edc1..f53eef4a0ee60e3aa7da3cc9234949ed5ae3e32f 100644
+--- a/dist/tsc/tests/ip.test.js
++++ b/dist/tsc/tests/ip.test.js
+@@ -10,5 +10,8 @@ describe("client querying an IP address", () => {
+         await expect(ip("999.999.999.999")).rejects.toThrow("Value has to be in the range of 0-255");
+         await expect(ip("not.an.ip")).rejects.toThrow("The given value is not a valid IP");
+     });
++    test('should throw error if an RDAP server cannot be found for an IP Address', async () => {
++        await expect(ip('127.0.0.1')).rejects.toThrow('RDAP Server for the given IP Address could not be found.');
++    });
+ });
+ //# sourceMappingURL=ip.test.js.map
+\ No newline at end of file
+diff --git a/dist/tsc/tests/ip.test.js.map b/dist/tsc/tests/ip.test.js.map
+index 0dced5d32d88e7a58f022f6c1c14805bf6492985..2a38a2032e90a692fa89eb5a90da6de945d693a1 100644
+--- a/dist/tsc/tests/ip.test.js.map
++++ b/dist/tsc/tests/ip.test.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"ip.test.js","sourceRoot":"","sources":["../../../src/tests/ip.test.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,EAAE,EAAE,MAAM,cAAc,CAAC;AAElC,QAAQ,CAAC,+BAA+B,EAAE,GAAG,EAAE;IAC7C,IAAI,CAAC,2CAA2C,EAAE,KAAK,IAAI,EAAE;QAC3D,MAAM,MAAM,CAAC,EAAE,CAAC,SAAS,CAAC,CAAC,CAAC,QAAQ,CAAC,WAAW,EAAE,CAAC;IACrD,CAAC,CAAC,CAAC;IAEH,IAAI,CAAC,2CAA2C,EAAE,KAAK,IAAI,EAAE;QAC3D,MAAM,MAAM,CAAC,EAAE,CAAC,sBAAsB,CAAC,CAAC,CAAC,QAAQ,CAAC,WAAW,EAAE,CAAC;IAClE,CAAC,CAAC,CAAC;IAEH,IAAI,CAAC,2CAA2C,EAAE,KAAK,IAAI,EAAE;QAC3D,MAAM,MAAM,CAAC,EAAE,CAAC,iBAAiB,CAAC,CAAC,CAAC,OAAO,CAAC,OAAO,CACjD,uCAAuC,CACxC,CAAC;QACF,MAAM,MAAM,CAAC,EAAE,CAAC,WAAW,CAAC,CAAC,CAAC,OAAO,CAAC,OAAO,CAC3C,mCAAmC,CACpC,CAAC;IACJ,CAAC,CAAC,CAAC;AACL,CAAC,CAAC,CAAC"}
+\ No newline at end of file
++{"version":3,"file":"ip.test.js","sourceRoot":"","sources":["../../../src/tests/ip.test.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,EAAE,EAAE,MAAM,cAAc,CAAC;AAElC,QAAQ,CAAC,+BAA+B,EAAE,GAAG,EAAE;IAC7C,IAAI,CAAC,2CAA2C,EAAE,KAAK,IAAI,EAAE;QAC3D,MAAM,MAAM,CAAC,EAAE,CAAC,SAAS,CAAC,CAAC,CAAC,QAAQ,CAAC,WAAW,EAAE,CAAC;IACrD,CAAC,CAAC,CAAC;IAEH,IAAI,CAAC,2CAA2C,EAAE,KAAK,IAAI,EAAE;QAC3D,MAAM,MAAM,CAAC,EAAE,CAAC,sBAAsB,CAAC,CAAC,CAAC,QAAQ,CAAC,WAAW,EAAE,CAAC;IAClE,CAAC,CAAC,CAAC;IAEH,IAAI,CAAC,2CAA2C,EAAE,KAAK,IAAI,EAAE;QAC3D,MAAM,MAAM,CAAC,EAAE,CAAC,iBAAiB,CAAC,CAAC,CAAC,OAAO,CAAC,OAAO,CACjD,uCAAuC,CACxC,CAAC;QACF,MAAM,MAAM,CAAC,EAAE,CAAC,WAAW,CAAC,CAAC,CAAC,OAAO,CAAC,OAAO,CAC3C,mCAAmC,CACpC,CAAC;IACJ,CAAC,CAAC,CAAC;IAEH,IAAI,CAAC,wEAAwE,EAAE,KAAK,IAAI,EAAE;QACxF,MAAM,MAAM,CAAC,EAAE,CAAC,WAAW,CAAC,CAAC,CAAC,OAAO,CAAC,OAAO,CAAC,0DAA0D,CAAC,CAAC;IAC5G,CAAC,CAAC,CAAC;AACL,CAAC,CAAC,CAAC"}
+\ No newline at end of file
+diff --git a/dist/tsc/utils/dns.js b/dist/tsc/utils/dns.js
+index 15dc38b55b0f091ae2fc18eaaafc19c9f3490e40..50e643afe43ec17b23812680af2b88c70e4ec4fc 100644
+--- a/dist/tsc/utils/dns.js
++++ b/dist/tsc/utils/dns.js
+@@ -1,10 +1,6 @@
++import { requestJson } from "./request.js";
+ const fetchList = async (url) => {
+-    const response = await fetch(url, {
+-        headers: {
+-            accept: "application/json,application/rdap+json",
+-        },
+-    });
+-    return response.json();
++    return requestJson(url);
+ };
+ export const fetchDNSList = async () => {
+     return fetchList("https://data.iana.org/rdap/dns.json");
+diff --git a/dist/tsc/utils/dns.js.map b/dist/tsc/utils/dns.js.map
+index 3cf806eb71704bf7f7f69a5d7493cd343b65b039..e87b85cec5015112195142caea8e4a6b1462c18b 100644
+--- a/dist/tsc/utils/dns.js.map
++++ b/dist/tsc/utils/dns.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"dns.js","sourceRoot":"","sources":["../../../src/utils/dns.ts"],"names":[],"mappings":"AAOA,MAAM,SAAS,GAAG,KAAK,EAAE,GAAW,EAAoB,EAAE;IACxD,MAAM,QAAQ,GAAG,MAAM,KAAK,CAAC,GAAG,EAAE;QAChC,OAAO,EAAE;YACP,MAAM,EAAE,wCAAwC;SACjD;KACF,CAAC,CAAC;IACH,OAAO,QAAQ,CAAC,IAAI,EAAE,CAAC;AACzB,CAAC,CAAC;AAEF,MAAM,CAAC,MAAM,YAAY,GAAG,KAAK,IAAI,EAAE;IACrC,OAAO,SAAS,CAAC,qCAAqC,CAAC,CAAC;AAC1D,CAAC,CAAC;AAEF,MAAM,CAAC,MAAM,aAAa,GAAG,KAAK,IAAI,EAAE;IACtC,OAAO,SAAS,CAAC,sCAAsC,CAAC,CAAC;AAC3D,CAAC,CAAC;AAEF,MAAM,CAAC,MAAM,aAAa,GAAG,KAAK,IAAI,EAAE;IACtC,OAAO,SAAS,CAAC,sCAAsC,CAAC,CAAC;AAC3D,CAAC,CAAC;AAEF,MAAM,CAAC,MAAM,YAAY,GAAG,KAAK,IAAI,EAAE;IACrC,OAAO,SAAS,CAAC,qCAAqC,CAAC,CAAC;AAC1D,CAAC,CAAC"}
+\ No newline at end of file
++{"version":3,"file":"dns.js","sourceRoot":"","sources":["../../../src/utils/dns.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,WAAW,EAAE,MAAM,cAAc,CAAC;AAS3C,MAAM,SAAS,GAAG,KAAK,EAAE,GAAW,EAAoB,EAAE;IACzD,OAAO,WAAW,CAAU,GAAG,CAAC,CAAC;AAClC,CAAC,CAAC;AAEF,MAAM,CAAC,MAAM,YAAY,GAAG,KAAK,IAAI,EAAE;IACrC,OAAO,SAAS,CAAC,qCAAqC,CAAC,CAAC;AAC1D,CAAC,CAAC;AAEF,MAAM,CAAC,MAAM,aAAa,GAAG,KAAK,IAAI,EAAE;IACtC,OAAO,SAAS,CAAC,sCAAsC,CAAC,CAAC;AAC3D,CAAC,CAAC;AAEF,MAAM,CAAC,MAAM,aAAa,GAAG,KAAK,IAAI,EAAE;IACtC,OAAO,SAAS,CAAC,sCAAsC,CAAC,CAAC;AAC3D,CAAC,CAAC;AAEF,MAAM,CAAC,MAAM,YAAY,GAAG,KAAK,IAAI,EAAE;IACrC,OAAO,SAAS,CAAC,qCAAqC,CAAC,CAAC;AAC1D,CAAC,CAAC"}
+\ No newline at end of file
+diff --git a/dist/tsc/utils/domain.js b/dist/tsc/utils/domain.js
+index f6f5dcafddd7e09278a270ddb78ae3d396094aac..31db889b512bce15b33faeb5f601fb2954a34208 100644
+--- a/dist/tsc/utils/domain.js
++++ b/dist/tsc/utils/domain.js
+@@ -6,18 +6,14 @@ export const getTopLevelDomain = (domain) => {
+     return null;
+ };
+ export const isFullyQualifiedDomainName = (str) => {
++    if (str.length > 255)
++        return false;
+     const parts = str.split(".");
+     const topLevelDomain = parts[parts.length - 1];
+     if (parts.length < 2)
+         return false;
+     if (!/^([a-z\u00A1-\u00A8\u00AA-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]{2,}|xn[a-z0-9-]{2,})$/i.test(topLevelDomain))
+         return false;
+-    if (/\s/.test(topLevelDomain)) {
+-        return false;
+-    }
+-    if (/^\d+$/.test(topLevelDomain)) {
+-        return false;
+-    }
+     return parts.every((part) => {
+         if (part.length > 63) {
+             return false;
+diff --git a/dist/tsc/utils/domain.js.map b/dist/tsc/utils/domain.js.map
+index 5bc5190e3da46521baf0741937355f59c4057699..4f2b099670d776305c6e6ec46e5d3d4471d67048 100644
+--- a/dist/tsc/utils/domain.js.map
++++ b/dist/tsc/utils/domain.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"domain.js","sourceRoot":"","sources":["../../../src/utils/domain.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,IAAI,QAAQ,EAAE,MAAM,4BAA4B,CAAC;AAEjE,MAAM,CAAC,MAAM,iBAAiB,GAAG,CAAC,MAAc,EAAE,EAAE;IAClD,MAAM,KAAK,GAAG,MAAM,CAAC,KAAK,CAAC,GAAG,CAAC,CAAC;IAChC,IAAI,KAAK,CAAC,MAAM,IAAI,KAAK,CAAC,KAAK,CAAC,MAAM,GAAG,CAAC,CAAC;QACzC,OAAO,QAAQ,CAAC,KAAK,CAAC,KAAK,CAAC,MAAM,GAAG,CAAC,CAAC,CAAC,CAAC;IAC3C,OAAO,IAAI,CAAC;AACd,CAAC,CAAC;AAEF,MAAM,CAAC,MAAM,0BAA0B,GAAG,CAAC,GAAW,EAAE,EAAE;IACxD,MAAM,KAAK,GAAG,GAAG,CAAC,KAAK,CAAC,GAAG,CAAC,CAAC;IAC7B,MAAM,cAAc,GAAG,KAAK,CAAC,KAAK,CAAC,MAAM,GAAG,CAAC,CAAC,CAAC;IAE/C,IAAI,KAAK,CAAC,MAAM,GAAG,CAAC;QAAE,OAAO,KAAK,CAAC;IAEnC,IACE,CAAC,oFAAoF,CAAC,IAAI,CACxF,cAAc,CACf;QAED,OAAO,KAAK,CAAC;IAEf,IAAI,IAAI,CAAC,IAAI,CAAC,cAAc,CAAC,EAAE,CAAC;QAC9B,OAAO,KAAK,CAAC;IACf,CAAC;IAED,IAAI,OAAO,CAAC,IAAI,CAAC,cAAc,CAAC,EAAE,CAAC;QACjC,OAAO,KAAK,CAAC;IACf,CAAC;IAED,OAAO,KAAK,CAAC,KAAK,CAAC,CAAC,IAAI,EAAE,EAAE;QAC1B,IAAI,IAAI,CAAC,MAAM,GAAG,EAAE,EAAE,CAAC;YACrB,OAAO,KAAK,CAAC;QACf,CAAC;QAED,IAAI,CAAC,6BAA6B,CAAC,IAAI,CAAC,IAAI,CAAC,EAAE,CAAC;YAC9C,OAAO,KAAK,CAAC;QACf,CAAC;QAED,IAAI,iBAAiB,CAAC,IAAI,CAAC,IAAI,CAAC,EAAE,CAAC;YACjC,OAAO,KAAK,CAAC;QACf,CAAC;QAED,IAAI,OAAO,CAAC,IAAI,CAAC,IAAI,CAAC,EAAE,CAAC;YACvB,OAAO,KAAK,CAAC;QACf,CAAC;QAED,IAAI,GAAG,CAAC,IAAI,CAAC,IAAI,CAAC,EAAE,CAAC;YACnB,OAAO,KAAK,CAAC;QACf,CAAC;QAED,OAAO,IAAI,CAAC;IACd,CAAC,CAAC,CAAC;AACL,CAAC,CAAC"}
+\ No newline at end of file
++{"version":3,"file":"domain.js","sourceRoot":"","sources":["../../../src/utils/domain.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,IAAI,QAAQ,EAAE,MAAM,4BAA4B,CAAC;AAEjE,MAAM,CAAC,MAAM,iBAAiB,GAAG,CAAC,MAAc,EAAE,EAAE;IAClD,MAAM,KAAK,GAAG,MAAM,CAAC,KAAK,CAAC,GAAG,CAAC,CAAC;IAChC,IAAI,KAAK,CAAC,MAAM,IAAI,KAAK,CAAC,KAAK,CAAC,MAAM,GAAG,CAAC,CAAC;QACzC,OAAO,QAAQ,CAAC,KAAK,CAAC,KAAK,CAAC,MAAM,GAAG,CAAC,CAAC,CAAC,CAAC;IAC3C,OAAO,IAAI,CAAC;AACd,CAAC,CAAC;AAEF,MAAM,CAAC,MAAM,0BAA0B,GAAG,CAAC,GAAW,EAAE,EAAE;IACxD,IAAG,GAAG,CAAC,MAAM,GAAG,GAAG;QAAE,OAAO,KAAK,CAAC;IAElC,MAAM,KAAK,GAAG,GAAG,CAAC,KAAK,CAAC,GAAG,CAAC,CAAC;IAC7B,MAAM,cAAc,GAAG,KAAK,CAAC,KAAK,CAAC,MAAM,GAAG,CAAC,CAAC,CAAC;IAE/C,IAAI,KAAK,CAAC,MAAM,GAAG,CAAC;QAAE,OAAO,KAAK,CAAC;IAEnC,IACE,CAAC,oFAAoF,CAAC,IAAI,CACxF,cAAc,CACf;QAED,OAAO,KAAK,CAAC;IAEf,OAAO,KAAK,CAAC,KAAK,CAAC,CAAC,IAAI,EAAE,EAAE;QAC1B,IAAI,IAAI,CAAC,MAAM,GAAG,EAAE,EAAE,CAAC;YACrB,OAAO,KAAK,CAAC;QACf,CAAC;QAED,IAAI,CAAC,6BAA6B,CAAC,IAAI,CAAC,IAAI,CAAC,EAAE,CAAC;YAC9C,OAAO,KAAK,CAAC;QACf,CAAC;QAED,IAAI,iBAAiB,CAAC,IAAI,CAAC,IAAI,CAAC,EAAE,CAAC;YACjC,OAAO,KAAK,CAAC;QACf,CAAC;QAED,IAAI,OAAO,CAAC,IAAI,CAAC,IAAI,CAAC,EAAE,CAAC;YACvB,OAAO,KAAK,CAAC;QACf,CAAC;QAED,IAAI,GAAG,CAAC,IAAI,CAAC,IAAI,CAAC,EAAE,CAAC;YACnB,OAAO,KAAK,CAAC;QACf,CAAC;QAED,OAAO,IAAI,CAAC;IACd,CAAC,CAAC,CAAC;AACL,CAAC,CAAC"}
+\ No newline at end of file
+diff --git a/dist/tsc/utils/request.d.ts b/dist/tsc/utils/request.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..1bfec5c8b151f2fe146eab8de01af9bf35cb93a5
+--- /dev/null
++++ b/dist/tsc/utils/request.d.ts
+@@ -0,0 +1 @@
++export declare const requestJson: <T>(requestUrl: string) => Promise<T>;
+diff --git a/dist/tsc/utils/request.js b/dist/tsc/utils/request.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..17de137791455aff790fd4be59d67821022ea8aa
+--- /dev/null
++++ b/dist/tsc/utils/request.js
+@@ -0,0 +1,90 @@
++import * as http2 from "node:http2";
++const acceptHeader = "application/json,application/rdap+json";
++const fetchJson = async (requestUrl) => {
++    const response = await fetch(requestUrl, {
++        headers: {
++            accept: acceptHeader,
++        },
++    });
++    if (!response.ok) {
++        throw new Error(`RDAP server responded with status ${response.status}: ${response.statusText}`);
++    }
++    return (await response.json());
++};
++const requestHttp2Json = async (requestUrl) => {
++    const url = new URL(requestUrl);
++    if (url.protocol !== "https:") {
++        return fetchJson(requestUrl);
++    }
++    return new Promise((resolve, reject) => {
++        const session = http2.connect(url.origin);
++        session.setTimeout(3000, () => {
++            finalize(new Error("HTTP/2 request timed out"));
++        });
++        let settled = false;
++        const finalize = (error, data) => {
++            if (settled) {
++                return;
++            }
++            settled = true;
++            session.destroy();
++            if (error) {
++                reject(error);
++                return;
++            }
++            resolve(data);
++        };
++        session.once("error", (error) => {
++            finalize(error instanceof Error ? error : new Error(String(error)));
++        });
++        session.once("connect", () => {
++            const request = session.request({
++                ":method": "GET",
++                ":path": `${url.pathname}${url.search}`,
++                ":scheme": url.protocol.slice(0, -1),
++                ":authority": url.host,
++                accept: acceptHeader,
++            });
++            const chunks = [];
++            let statusCode = 0;
++            request.once("response", (headers) => {
++                const responseStatus = headers[":status"];
++                statusCode = typeof responseStatus === "number" ? responseStatus : 0;
++            });
++            request.on("data", (chunk) => {
++                chunks.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk);
++            });
++            request.once("error", (error) => {
++                finalize(error instanceof Error ? error : new Error(String(error)));
++            });
++            request.once("end", () => {
++                if (statusCode < 200 || statusCode >= 300) {
++                    finalize(new Error(`RDAP server responded with status ${statusCode}:`));
++                    return;
++                }
++                try {
++                    const body = Buffer.concat(chunks).toString("utf8");
++                    finalize(undefined, JSON.parse(body));
++                }
++                catch (error) {
++                    finalize(error instanceof Error ? error : new Error(String(error)));
++                }
++            });
++            request.end();
++        });
++    });
++};
++export const requestJson = async (requestUrl) => {
++    const url = new URL(requestUrl);
++    const shouldUseHttp2 = url.protocol === "https:" && url.hostname.endsWith("twnic.tw");
++    if (!shouldUseHttp2) {
++        return fetchJson(requestUrl);
++    }
++    try {
++        return await requestHttp2Json(requestUrl);
++    }
++    catch (error) {
++        return fetchJson(requestUrl);
++    }
++};
++//# sourceMappingURL=request.js.map
+\ No newline at end of file
+diff --git a/dist/tsc/utils/request.js.map b/dist/tsc/utils/request.js.map
+new file mode 100644
+index 0000000000000000000000000000000000000000..0d4fe6b9f02a94f86f2e96bc3f27c76c22309bbe
+--- /dev/null
++++ b/dist/tsc/utils/request.js.map
+@@ -0,0 +1 @@
++{"version":3,"file":"request.js","sourceRoot":"","sources":["../../../src/utils/request.ts"],"names":[],"mappings":"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"}
+\ No newline at end of file
+diff --git a/dist/tsc/utils/tests/fqdn.test.js b/dist/tsc/utils/tests/fqdn.test.js
+index 4d1670e4e9132ec3eb5ef974916f2589a34e6380..4052cf9cbb86a48741f9e96d9e5b8a1cfe0c108b 100644
+--- a/dist/tsc/utils/tests/fqdn.test.js
++++ b/dist/tsc/utils/tests/fqdn.test.js
+@@ -1,4 +1,4 @@
+-import { isFullyQualifiedDomainName } from "../domain";
++import { isFullyQualifiedDomainName } from "../domain.js";
+ describe("isFullyQualifieidDomainName", () => {
+     test("should return true for valid FQDN", () => {
+         let isFQDN;
+@@ -18,5 +18,96 @@ describe("isFullyQualifieidDomainName", () => {
+         isFQDN = isFullyQualifiedDomainName("https://www.insytful.com/news");
+         expect(isFQDN).toBe(false);
+     });
++    test('should return false for empty space input', () => {
++        let isFQDN;
++        isFQDN = isFullyQualifiedDomainName(' ');
++        expect(isFQDN).toBe(false);
++        isFQDN = isFullyQualifiedDomainName('    ');
++        expect(isFQDN).toBe(false);
++        isFQDN = isFullyQualifiedDomainName("\t");
++        expect(isFQDN).toBe(false);
++        isFQDN = isFullyQualifiedDomainName("\t\t\t\t");
++        expect(isFQDN).toBe(false);
++        isFQDN = isFullyQualifiedDomainName("\n");
++        expect(isFQDN).toBe(false);
++        isFQDN = isFullyQualifiedDomainName("\n\n\n\n");
++        expect(isFQDN).toBe(false);
++        isFQDN = isFullyQualifiedDomainName(" \t\n");
++        expect(isFQDN).toBe(false);
++    });
++    test('should return false for numeric input', () => {
++        let isFQDN;
++        isFQDN = isFullyQualifiedDomainName('12345');
++        expect(isFQDN).toBe(false);
++        isFQDN = isFullyQualifiedDomainName('834925');
++        expect(isFQDN).toBe(false);
++    });
++    test('should return false if one of the labels has more than 63 characters', () => {
++        let isFQDN;
++        isFQDN = isFullyQualifiedDomainName('www.myreallylongdomainwithmorethan63characterscontainedinsideofitself.co.uk');
++        expect(isFQDN).toBe(false);
++        isFQDN = isFullyQualifiedDomainName('wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww.domain.co.uk');
++        expect(isFQDN).toBe(false);
++        isFQDN = isFullyQualifiedDomainName('wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww.domain.co.uk');
++        expect(isFQDN).toBe(true);
++    });
++    test('should return false if the domain is too long', () => {
++        let isFQDN;
++        isFQDN = isFullyQualifiedDomainName('aaaaaaaaaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbb.cccccccccccccccccccc.dddddddddddddddddddd.eeeeeeeeeeeeeeeeeeee.ffffffffffffffffffff.gggggggggggggggggggg.www.sub.domain.of.really.long.domain.that.is.over.the.two.hundred.and.fifty.five.character.limit.for.domains.com');
++        expect(isFQDN).toBe(false);
++        isFQDN = isFullyQualifiedDomainName('www.sub.domain.of.really.long.domain.that.is.not.over.the.two.hundred.and.fifty.five.character.limit.for.domains.com');
++        expect(isFQDN).toBe(true);
++    });
++    test('should return false if the domain contains an invalid character', () => {
++        let isFQDN;
++        isFQDN = isFullyQualifiedDomainName('mydomain.co.uk');
++        expect(isFQDN).toBe(true);
++        isFQDN = isFullyQualifiedDomainName('mydomain！.co.uk');
++        expect(isFQDN).toBe(false);
++        isFQDN = isFullyQualifiedDomainName('mydomain～.co.uk');
++        expect(isFQDN).toBe(false);
++    });
++    test('should return false if the domain starts or ends with a hyphen', () => {
++        let isFQDN;
++        isFQDN = isFullyQualifiedDomainName('my-hyphenated-domain.com');
++        expect(isFQDN).toBe(true);
++        isFQDN = isFullyQualifiedDomainName('-hyphenated-domain.com');
++        expect(isFQDN).toBe(false);
++        isFQDN = isFullyQualifiedDomainName('hyphenated-domain-.com');
++        expect(isFQDN).toBe(false);
++        isFQDN = isFullyQualifiedDomainName('sub-domain.my-domain.com');
++        expect(isFQDN).toBe(true);
++        isFQDN = isFullyQualifiedDomainName('sub-domain-.my-domain.com');
++        expect(isFQDN).toBe(false);
++        isFQDN = isFullyQualifiedDomainName('-sub-domain.my-domain.com');
++        expect(isFQDN).toBe(false);
++        isFQDN = isFullyQualifiedDomainName('sub-domain.-my-domain.com');
++        expect(isFQDN).toBe(false);
++        isFQDN = isFullyQualifiedDomainName('sub-domain.my-domain-.com');
++        expect(isFQDN).toBe(false);
++        isFQDN = isFullyQualifiedDomainName('deep-sub.sub-domain.my-domain.com');
++        expect(isFQDN).toBe(true);
++        isFQDN = isFullyQualifiedDomainName('-deep-sub.sub-domain.my-domain.com');
++        expect(isFQDN).toBe(false);
++        isFQDN = isFullyQualifiedDomainName('deep-sub-.sub-domain.my-domain.com');
++        expect(isFQDN).toBe(false);
++        isFQDN = isFullyQualifiedDomainName('deep-sub.-sub-domain.my-domain.com');
++        expect(isFQDN).toBe(false);
++        isFQDN = isFullyQualifiedDomainName('deep-sub.sub-domain-.my-domain.com');
++        expect(isFQDN).toBe(false);
++        isFQDN = isFullyQualifiedDomainName('deep-sub.sub-domain.-my-domain.com');
++        expect(isFQDN).toBe(false);
++        isFQDN = isFullyQualifiedDomainName('deep-sub.sub-domain.my-domain-.com');
++        expect(isFQDN).toBe(false);
++    });
++    test('should return false if the domain contains an underscore', () => {
++        let isFQDN;
++        isFQDN = isFullyQualifiedDomainName('my_domain.com');
++        expect(isFQDN).toBe(false);
++        isFQDN = isFullyQualifiedDomainName('my_longer_domain.com');
++        expect(isFQDN).toBe(false);
++        isFQDN = isFullyQualifiedDomainName('my-even_longer-domain.com');
++        expect(isFQDN).toBe(false);
++    });
+ });
+ //# sourceMappingURL=fqdn.test.js.map
+\ No newline at end of file
+diff --git a/dist/tsc/utils/tests/fqdn.test.js.map b/dist/tsc/utils/tests/fqdn.test.js.map
+index ad8cfba644fffd78f669bbe0021c475a49520033..25da540de6ad219587ded82e9b196d7e4633cb74 100644
+--- a/dist/tsc/utils/tests/fqdn.test.js.map
++++ b/dist/tsc/utils/tests/fqdn.test.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"fqdn.test.js","sourceRoot":"","sources":["../../../../src/utils/tests/fqdn.test.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,0BAA0B,EAAE,MAAM,WAAW,CAAC;AAEvD,QAAQ,CAAC,6BAA6B,EAAE,GAAG,EAAE;IAC3C,IAAI,CAAC,mCAAmC,EAAE,GAAG,EAAE;QAC7C,IAAI,MAAe,CAAC;QACpB,MAAM,GAAG,0BAA0B,CAAC,cAAc,CAAC,CAAC;QACpD,MAAM,CAAC,MAAM,CAAC,CAAC,IAAI,CAAC,IAAI,CAAC,CAAC;QAC1B,MAAM,GAAG,0BAA0B,CAAC,gBAAgB,CAAC,CAAC;QACtD,MAAM,CAAC,MAAM,CAAC,CAAC,IAAI,CAAC,IAAI,CAAC,CAAC;QAC1B,MAAM,GAAG,0BAA0B,CAAC,iBAAiB,CAAC,CAAC;QACvD,MAAM,CAAC,MAAM,CAAC,CAAC,IAAI,CAAC,IAAI,CAAC,CAAC;IAC5B,CAAC,CAAC,CAAC;IAEH,IAAI,CAAC,sCAAsC,EAAE,GAAG,EAAE;QAChD,IAAI,MAAe,CAAC;QACpB,MAAM,GAAG,0BAA0B,CAAC,UAAU,CAAC,CAAC;QAChD,MAAM,CAAC,MAAM,CAAC,CAAC,IAAI,CAAC,KAAK,CAAC,CAAC;QAC3B,MAAM,GAAG,0BAA0B,CAAC,0BAA0B,CAAC,CAAC;QAChE,MAAM,CAAC,MAAM,CAAC,CAAC,IAAI,CAAC,KAAK,CAAC,CAAC;QAC3B,MAAM,GAAG,0BAA0B,CAAC,+BAA+B,CAAC,CAAC;QACrE,MAAM,CAAC,MAAM,CAAC,CAAC,IAAI,CAAC,KAAK,CAAC,CAAC;IAC7B,CAAC,CAAC,CAAC;AACL,CAAC,CAAC,CAAC"}
+\ No newline at end of file
++{"version":3,"file":"fqdn.test.js","sourceRoot":"","sources":["../../../../src/utils/tests/fqdn.test.ts"],"names":[],"mappings":"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"}
+\ No newline at end of file
+diff --git a/dist/tsc/utils/tests/getTopLevelDomain.test.js b/dist/tsc/utils/tests/getTopLevelDomain.test.js
+index fa89dd3deff11f1a2889d332ed47641dc3ef0a0b..b208ec8711bb83b1dd5390e65aeb296633b509d9 100644
+--- a/dist/tsc/utils/tests/getTopLevelDomain.test.js
++++ b/dist/tsc/utils/tests/getTopLevelDomain.test.js
+@@ -1,4 +1,4 @@
+-import { getTopLevelDomain } from "../domain";
++import { getTopLevelDomain } from "../domain.js";
+ describe("getTopLevelDomain", () => {
+     test("works on standard input", () => {
+         const tld = getTopLevelDomain("insytful.com");
+@@ -8,5 +8,13 @@ describe("getTopLevelDomain", () => {
+         const tld = getTopLevelDomain("insytful.集团");
+         expect(tld).toBe("xn--3bst00m");
+     });
++    test("returns null for empty input", () => {
++        const tld = getTopLevelDomain('');
++        expect(tld).toBeNull();
++    });
++    test("works on input that is already a TLD", () => {
++        const tld = getTopLevelDomain('com');
++        expect(tld).toBe('com');
++    });
+ });
+ //# sourceMappingURL=getTopLevelDomain.test.js.map
+\ No newline at end of file
+diff --git a/dist/tsc/utils/tests/getTopLevelDomain.test.js.map b/dist/tsc/utils/tests/getTopLevelDomain.test.js.map
+index 92760396e971b76d284051d4f56cdeef41ac7db3..c735c77316eb605b3f25b26107f854088ade6fae 100644
+--- a/dist/tsc/utils/tests/getTopLevelDomain.test.js.map
++++ b/dist/tsc/utils/tests/getTopLevelDomain.test.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"getTopLevelDomain.test.js","sourceRoot":"","sources":["../../../../src/utils/tests/getTopLevelDomain.test.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,iBAAiB,EAAE,MAAM,WAAW,CAAC;AAE9C,QAAQ,CAAC,mBAAmB,EAAE,GAAG,EAAE;IACjC,IAAI,CAAC,yBAAyB,EAAE,GAAG,EAAE;QACnC,MAAM,GAAG,GAAG,iBAAiB,CAAC,cAAc,CAAC,CAAC;QAC9C,MAAM,CAAC,GAAG,CAAC,CAAC,IAAI,CAAC,KAAK,CAAC,CAAC;IAC1B,CAAC,CAAC,CAAC;IAEH,IAAI,CAAC,yCAAyC,EAAE,GAAG,EAAE;QACnD,MAAM,GAAG,GAAG,iBAAiB,CAAC,aAAa,CAAC,CAAC;QAC7C,MAAM,CAAC,GAAG,CAAC,CAAC,IAAI,CAAC,aAAa,CAAC,CAAC;IAClC,CAAC,CAAC,CAAC;AACL,CAAC,CAAC,CAAC"}
+\ No newline at end of file
++{"version":3,"file":"getTopLevelDomain.test.js","sourceRoot":"","sources":["../../../../src/utils/tests/getTopLevelDomain.test.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,iBAAiB,EAAE,MAAM,cAAc,CAAC;AAEjD,QAAQ,CAAC,mBAAmB,EAAE,GAAG,EAAE;IACjC,IAAI,CAAC,yBAAyB,EAAE,GAAG,EAAE;QACnC,MAAM,GAAG,GAAG,iBAAiB,CAAC,cAAc,CAAC,CAAC;QAC9C,MAAM,CAAC,GAAG,CAAC,CAAC,IAAI,CAAC,KAAK,CAAC,CAAC;IAC1B,CAAC,CAAC,CAAC;IAEH,IAAI,CAAC,yCAAyC,EAAE,GAAG,EAAE;QACnD,MAAM,GAAG,GAAG,iBAAiB,CAAC,aAAa,CAAC,CAAC;QAC7C,MAAM,CAAC,GAAG,CAAC,CAAC,IAAI,CAAC,aAAa,CAAC,CAAC;IAClC,CAAC,CAAC,CAAC;IAEH,IAAI,CAAC,8BAA8B,EAAE,GAAG,EAAE;QACxC,MAAM,GAAG,GAAG,iBAAiB,CAAC,EAAE,CAAC,CAAC;QAClC,MAAM,CAAC,GAAG,CAAC,CAAC,QAAQ,EAAE,CAAC;IACzB,CAAC,CAAC,CAAA;IAEF,IAAI,CAAC,sCAAsC,EAAE,GAAG,EAAE;QAChD,MAAM,GAAG,GAAG,iBAAiB,CAAC,KAAK,CAAC,CAAC;QACrC,MAAM,CAAC,GAAG,CAAC,CAAC,IAAI,CAAC,KAAK,CAAC,CAAC;IAC1B,CAAC,CAAC,CAAA;AACJ,CAAC,CAAC,CAAC"}
+\ No newline at end of file
+diff --git a/dist/tsc/utils/tests/inRange.test.js b/dist/tsc/utils/tests/inRange.test.js
+index a5ef9d316816885786133f8a9d4a0c1f5c961c35..f7989a19a7a8e0944bd28ebf8f9c8c2fe30b606a 100644
+--- a/dist/tsc/utils/tests/inRange.test.js
++++ b/dist/tsc/utils/tests/inRange.test.js
+@@ -1,4 +1,4 @@
+-import { inRange } from "../autnum";
++import { inRange } from "../autnum.js";
+ describe("inRange", () => {
+     test("returns true when value is within the given range", () => {
+         let isInRange;
+diff --git a/dist/tsc/utils/tests/inRange.test.js.map b/dist/tsc/utils/tests/inRange.test.js.map
+index df9f8348dedb0230139b3c1c9843a816d3e4cb96..15f690b103cc23a50fdf24b99d38adf84cb0a9b9 100644
+--- a/dist/tsc/utils/tests/inRange.test.js.map
++++ b/dist/tsc/utils/tests/inRange.test.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"inRange.test.js","sourceRoot":"","sources":["../../../../src/utils/tests/inRange.test.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,MAAM,WAAW,CAAC;AAEpC,QAAQ,CAAC,SAAS,EAAE,GAAG,EAAE;IACvB,IAAI,CAAC,mDAAmD,EAAE,GAAG,EAAE;QAC7D,IAAI,SAAkB,CAAC;QACvB,SAAS,GAAG,OAAO,CAAC,CAAC,EAAE,MAAM,CAAC,CAAC;QAC/B,MAAM,CAAC,SAAS,CAAC,CAAC,IAAI,CAAC,IAAI,CAAC,CAAC;QAE7B,SAAS,GAAG,OAAO,CAAC,CAAC,EAAE,MAAM,CAAC,CAAC;QAC/B,MAAM,CAAC,SAAS,CAAC,CAAC,IAAI,CAAC,IAAI,CAAC,CAAC;QAE7B,SAAS,GAAG,OAAO,CAAC,KAAK,EAAE,aAAa,CAAC,CAAC;QAC1C,MAAM,CAAC,SAAS,CAAC,CAAC,IAAI,CAAC,IAAI,CAAC,CAAC;IAC/B,CAAC,CAAC,CAAC;IAEH,IAAI,CAAC,qDAAqD,EAAE,GAAG,EAAE;QAC/D,IAAI,SAAkB,CAAC;QACvB,SAAS,GAAG,OAAO,CAAC,EAAE,EAAE,MAAM,CAAC,CAAC;QAChC,MAAM,CAAC,SAAS,CAAC,CAAC,IAAI,CAAC,KAAK,CAAC,CAAC;QAE9B,SAAS,GAAG,OAAO,CAAC,CAAC,CAAC,EAAE,MAAM,CAAC,CAAC;QAChC,MAAM,CAAC,SAAS,CAAC,CAAC,IAAI,CAAC,KAAK,CAAC,CAAC;QAE9B,SAAS,GAAG,OAAO,CAAC,SAAS,EAAE,uBAAuB,CAAC,CAAC;QACxD,MAAM,CAAC,SAAS,CAAC,CAAC,IAAI,CAAC,KAAK,CAAC,CAAC;IAChC,CAAC,CAAC,CAAC;IAEH,IAAI,CAAC,8CAA8C,EAAE,GAAG,EAAE;QACxD,MAAM,KAAK,GAAG,MAAM,CAAC;QACrB,IAAI,SAAkB,CAAC;QACvB,KAAK,IAAI,CAAC,GAAG,CAAC,EAAE,EAAE,CAAC,GAAG,EAAE,EAAE,CAAC,EAAE,EAAE,CAAC;YAC9B,SAAS,GAAG,OAAO,CAAC,CAAC,EAAE,KAAK,CAAC,CAAC;YAC9B,MAAM,CAAC,SAAS,CAAC,CAAC,IAAI,CAAC,KAAK,CAAC,CAAC;QAChC,CAAC;IACH,CAAC,CAAC,CAAC;AACL,CAAC,CAAC,CAAC"}
+\ No newline at end of file
++{"version":3,"file":"inRange.test.js","sourceRoot":"","sources":["../../../../src/utils/tests/inRange.test.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,MAAM,cAAc,CAAC;AAEvC,QAAQ,CAAC,SAAS,EAAE,GAAG,EAAE;IACvB,IAAI,CAAC,mDAAmD,EAAE,GAAG,EAAE;QAC7D,IAAI,SAAkB,CAAC;QACvB,SAAS,GAAG,OAAO,CAAC,CAAC,EAAE,MAAM,CAAC,CAAC;QAC/B,MAAM,CAAC,SAAS,CAAC,CAAC,IAAI,CAAC,IAAI,CAAC,CAAC;QAE7B,SAAS,GAAG,OAAO,CAAC,CAAC,EAAE,MAAM,CAAC,CAAC;QAC/B,MAAM,CAAC,SAAS,CAAC,CAAC,IAAI,CAAC,IAAI,CAAC,CAAC;QAE7B,SAAS,GAAG,OAAO,CAAC,KAAK,EAAE,aAAa,CAAC,CAAC;QAC1C,MAAM,CAAC,SAAS,CAAC,CAAC,IAAI,CAAC,IAAI,CAAC,CAAC;IAC/B,CAAC,CAAC,CAAC;IAEH,IAAI,CAAC,qDAAqD,EAAE,GAAG,EAAE;QAC/D,IAAI,SAAkB,CAAC;QACvB,SAAS,GAAG,OAAO,CAAC,EAAE,EAAE,MAAM,CAAC,CAAC;QAChC,MAAM,CAAC,SAAS,CAAC,CAAC,IAAI,CAAC,KAAK,CAAC,CAAC;QAE9B,SAAS,GAAG,OAAO,CAAC,CAAC,CAAC,EAAE,MAAM,CAAC,CAAC;QAChC,MAAM,CAAC,SAAS,CAAC,CAAC,IAAI,CAAC,KAAK,CAAC,CAAC;QAE9B,SAAS,GAAG,OAAO,CAAC,SAAS,EAAE,uBAAuB,CAAC,CAAC;QACxD,MAAM,CAAC,SAAS,CAAC,CAAC,IAAI,CAAC,KAAK,CAAC,CAAC;IAChC,CAAC,CAAC,CAAC;IAEH,IAAI,CAAC,8CAA8C,EAAE,GAAG,EAAE;QACxD,MAAM,KAAK,GAAG,MAAM,CAAC;QACrB,IAAI,SAAkB,CAAC;QACvB,KAAK,IAAI,CAAC,GAAG,CAAC,EAAE,EAAE,CAAC,GAAG,EAAE,EAAE,CAAC,EAAE,EAAE,CAAC;YAC9B,SAAS,GAAG,OAAO,CAAC,CAAC,EAAE,KAAK,CAAC,CAAC;YAC9B,MAAM,CAAC,SAAS,CAAC,CAAC,IAAI,CAAC,KAAK,CAAC,CAAC;QAChC,CAAC;IACH,CAAC,CAAC,CAAC;AACL,CAAC,CAAC,CAAC"}

@@ -4,3 +4,5 @@ allowBuilds:
 minimumReleaseAge: 1440
 overrides:
   serialize-javascript@<=7.0.2: ^7.0.3
+patchedDependencies:
+  node-rdap: patches/node-rdap.patch
