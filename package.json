@@ -28,7 +28,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
-    "framer-motion": "^13.4.1",
+    "framer-motion": "^13.4.2",
     "geist": "^1.7.2",
     "i18next": "^26.4.2",
     "ioredis": "^6.0.0",
