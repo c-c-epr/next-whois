@@ -54,11 +54,12 @@ jobs:
             ${{ runner.os }}-next-${{ hashFiles('pnpm-lock.yaml') }}-
             ${{ runner.os }}-next-
 
-      - name: Typecheck
-        run: pnpm exec tsc --noEmit
+      - parallel:
+          - name: Typecheck
+            run: pnpm exec tsc --noEmit
 
-      - name: Test
-        run: pnpm test
+          - name: Test
+            run: pnpm test
 
-      - name: Build
-        run: pnpm build
+          - name: Build
+            run: pnpm build
