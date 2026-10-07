@@ -174,8 +174,8 @@ importers:
         specifier: ^0.8.14
         version: 0.8.14
       '@khmyznikov/pwa-install':
-        specifier: ^0.6.4
-        version: 0.6.4(@lit/react@1.0.8(@types/react@19.3.0))(@types/dom-chromium-installation-events@101.0.4)(@types/web-app-manifest@1.0.9)(lit@3.3.3)
+        specifier: ^0.7.0
+        version: 0.7.0(@lit/react@1.0.8(@types/react@19.3.0))(@types/dom-chromium-installation-events@101.0.4)(@types/web-app-manifest@1.0.9)(lit@3.3.3)
       '@radix-ui/react-dialog':
         specifier: ^1.2.0
         version: 1.2.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -1041,8 +1041,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@khmyznikov/pwa-install@0.6.4':
-    resolution: {integrity: sha512-Ks80e6Ltzdq0qnz8csuTtIaxjJz0RxPvbi2CBt997g4mm21evq+kRp4ima9lqhFhRCxbwmzBwnu2B3to9lxdhw==}
+  '@khmyznikov/pwa-install@0.7.0':
+    resolution: {integrity: sha512-tNCySLozRdIAzRKAm2ylqPFf6jTq9KfZxsPmMlwDKD8JUwF8TWosFRTnz26nlRubaMstN6RLAREcL1OC+ZVGPA==}
     peerDependencies:
       '@lit/react': ^1.0.8
       '@types/dom-chromium-installation-events': ^101.0.4
@@ -1966,8 +1966,8 @@ packages:
   '@xtuc/long@4.2.2':
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
 
-  acorn@8.19.0:
-    resolution: {integrity: sha512-oJlA3XiRm7Cyk6qFD2Jn8ak9B7jSy0qy00ADO3+8dpT0LSjFihQYv4C02LFCSYJV3Q37xYwwRy5m+IpIiUzqWw==}
+  acorn@8.18.0:
+    resolution: {integrity: sha512-lGq+9yr1/GuAWaVYIHRjvvySG5/4VfKIvC8EWxStPdcDh/Ka7FG3twP6v4d5BkravUilhIAsG4Qj83t02LWUPQ==}
     engines: {node: '>=0.4.0'}
     hasBin: true
 
@@ -2493,6 +2493,9 @@ packages:
   ignore@5.3.2:
     resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
     engines: {node: '>= 4'}
+
+  inapp-spy@5.0.10:
+    resolution: {integrity: sha512-TBvQdIo2F9zc6qeOPiqOZ9dpUaBX61ImF+gEvWVwVFXPXgey/AvGgN2l8gUZlGd4UE6rCahSfCV+51WtxeTY2w==}
 
   inflight@1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
@@ -4699,11 +4702,12 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.6.0
 
-  '@khmyznikov/pwa-install@0.6.4(@lit/react@1.0.8(@types/react@19.3.0))(@types/dom-chromium-installation-events@101.0.4)(@types/web-app-manifest@1.0.9)(lit@3.3.3)':
+  '@khmyznikov/pwa-install@0.7.0(@lit/react@1.0.8(@types/react@19.3.0))(@types/dom-chromium-installation-events@101.0.4)(@types/web-app-manifest@1.0.9)(lit@3.3.3)':
     dependencies:
       '@lit/react': 1.0.8(@types/react@19.3.0)
       '@types/dom-chromium-installation-events': 101.0.4
       '@types/web-app-manifest': 1.0.9
+      inapp-spy: 5.0.10
       lit: 3.3.3
 
   '@lit-labs/ssr-dom-shim@1.6.0': {}
@@ -5490,7 +5494,7 @@ snapshots:
 
   '@xtuc/long@4.2.2': {}
 
-  acorn@8.19.0: {}
+  acorn@8.18.0: {}
 
   ajv-formats@3.0.1:
     dependencies:
@@ -6075,6 +6079,8 @@ snapshots:
   idb@7.1.1: {}
 
   ignore@5.3.2: {}
+
+  inapp-spy@5.0.10: {}
 
   inflight@1.0.6:
     dependencies:
@@ -7063,7 +7069,7 @@ snapshots:
   terser@5.51.2:
     dependencies:
       '@jridgewell/source-map': 0.3.11
-      acorn: 8.19.0
+      acorn: 8.18.0
       commander: 2.20.3
       source-map-support: 0.5.21
 
