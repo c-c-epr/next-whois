@@ -2,8 +2,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 
 export interface InfoTextProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    React.PropsWithChildren<{}> {
+  extends React.HTMLAttributes<HTMLDivElement>, React.PropsWithChildren<{}> {
   content: string;
 }
 
