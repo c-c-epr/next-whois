@@ -132,7 +132,10 @@ export default async function handler(
 
   if (query) {
     try {
-      const origin = requestUrl.origin;
+      const configuredOrigin = process.env.NEXT_PUBLIC_SITE_URL;
+      const origin = configuredOrigin
+        ? new URL(configuredOrigin).origin
+        : `http://127.0.0.1:${req.socket.localPort || 3000}`;
       const res = await fetch(
         `${origin}/api/lookup?query=${encodeURIComponent(query)}`,
       );
