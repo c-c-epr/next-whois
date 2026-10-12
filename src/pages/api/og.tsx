@@ -1,8 +1,8 @@
 import { ImageResponse } from "next/og";
-import { NextRequest } from "next/server";
+import type { NextApiRequest, NextApiResponse } from "next";
 import { getEppStatusDisplayName } from "@/lib/whois/epp_status";
 
-export const config = { runtime: "edge" };
+export const config = { runtime: "nodejs" };
 
 function detectType(q: string): string {
   if (!q) return "unknown";
@@ -53,8 +53,19 @@ function formatDate(dateStr: string): string {
   }
 }
 
-export default async function handler(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
+  const forwardedProto = req.headers["x-forwarded-proto"];
+  const protocol =
+    (Array.isArray(forwardedProto) ? forwardedProto[0] : forwardedProto) ||
+    "http";
+  const host = Array.isArray(req.headers.host)
+    ? req.headers.host[0]
+    : req.headers.host || "localhost";
+  const requestUrl = new URL(req.url || "/", `${protocol}://${host}`);
+  const { searchParams } = requestUrl;
   const query = searchParams.get("query") || searchParams.get("q") || "";
   const w = Math.min(
     Math.max(parseInt(searchParams.get("w") || "1200") || 1200, 200),
@@ -121,7 +132,7 @@ export default async function handler(req: NextRequest) {
 
   if (query) {
     try {
-      const origin = new URL(req.url).origin;
+      const origin = requestUrl.origin;
       const res = await fetch(
         `${origin}/api/lookup?query=${encodeURIComponent(query)}`,
       );
@@ -180,7 +191,7 @@ export default async function handler(req: NextRequest) {
         : "";
   const updatedRelative = updated ? getRelativeTime(updated) : "";
 
-  return new ImageResponse(
+  const imageResponse = new ImageResponse(
     <div
       style={{
         width: "100%",
@@ -855,4 +866,11 @@ export default async function handler(req: NextRequest) {
     </div>,
     { width: w, height: h },
   );
+
+  imageResponse.headers.forEach((value, key) => {
+    res.setHeader(key, value);
+  });
+  return res
+    .status(imageResponse.status)
+    .send(Buffer.from(await imageResponse.arrayBuffer()));
 }

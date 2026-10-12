@@ -246,7 +246,7 @@ export default function DocsPage({ origin }: { origin: string }) {
   return (
     <>
       <Head>
-        <title>{t("docs.title")} - Next Whois</title>
+        <title>{`${t("docs.title")} - Next Whois`}</title>
         <meta
           key="og:title"
           property="og:title"
