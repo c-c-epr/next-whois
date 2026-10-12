@@ -7,7 +7,7 @@ COPY . .
 RUN npm install -g pnpm
 RUN pnpm install
 
-RUN pnpm build
+RUN pnpm build --webpack
 
 ENV NODE_ENV=production
 
