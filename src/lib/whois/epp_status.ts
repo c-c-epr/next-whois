@@ -1,10 +1,5 @@
 export type EppStatusCategory =
-  | "ok"
-  | "client"
-  | "server"
-  | "pending"
-  | "grace"
-  | "redemption";
+  "ok" | "client" | "server" | "pending" | "grace" | "redemption";
 
 export type EppStatusInfo = {
   description: string;
