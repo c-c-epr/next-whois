@@ -2282,7 +2282,9 @@ export default function LookupPage({
                 <Label className="text-xs">{t("theme")}</Label>
                 <Select
                   value={imgTheme}
-                  onValueChange={(v: "light" | "dark") => setImgTheme(v)}
+                  onValueChange={(v) => {
+                    if (v === "light" || v === "dark") setImgTheme(v);
+                  }}
                 >
                   <SelectTrigger className="h-8 text-xs">
                     <SelectValue />
