@@ -17,7 +17,6 @@ export type DomainRegex = {
   unknownTLD?: boolean;
 };
 
-
 const defaultRegex: DomainRegex = {
   domainName: "Domain Name: *([^\\s]+)",
   registrar: "Registrar: *(.+)",
@@ -396,5 +395,3 @@ export function getDomainRegex(domain: string): DomainRegex {
     return defaultRegex;
   }
 }
-
-
