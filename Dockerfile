@@ -17,6 +17,8 @@ COPY . .
 RUN npm install -g pnpm
 RUN pnpm install
 
+RUN pnpm exec next telemetry disable
+
 RUN pnpm build
 
 FROM node:${NODE_VERSION}-alpine AS runner
