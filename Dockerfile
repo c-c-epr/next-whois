@@ -41,4 +41,4 @@ EXPOSE 3000
 HEALTHCHECK --interval=10s --timeout=5s --start-period=10s --retries=5 \
 	CMD ["node", "-e", "fetch('http://127.0.0.1:3000/api/health').then(async (response) => { console.log(`HTTP ${response.status}`); process.exit(response.status === 200 ? 0 : 1); }).catch((error) => { console.error(error.message); process.exit(1); })"]
 
-CMD ["sh", "-c", "HOSTNAME=0.0.0.0 exec node server.js"]
+CMD ["node", "server.js"]
