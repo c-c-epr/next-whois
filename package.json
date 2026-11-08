@@ -29,7 +29,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
     "framer-motion": "^14.7.1",
-    "geist": "^1.8.2",
+    "geist": "^1.9.1",
     "ioredis": "^6.0.0",
     "lucide-react": "^1.64.0",
     "moment": "^2.31.0",
